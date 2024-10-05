@@ -5,6 +5,8 @@ VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serkovaAY", "serkovaAY.vcxproj", "{76148506-2A4C-45A7-802A-EC8B05AE8475}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serkova_project", "..\serkova_project\serkova_project.vcxproj", "{4C4B1ADF-11B1-4819-A066-A9F36F8F889F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{76148506-2A4C-45A7-802A-EC8B05AE8475}.Release|x64.Build.0 = Release|x64
 		{76148506-2A4C-45A7-802A-EC8B05AE8475}.Release|x86.ActiveCfg = Release|Win32
 		{76148506-2A4C-45A7-802A-EC8B05AE8475}.Release|x86.Build.0 = Release|Win32
+		{4C4B1ADF-11B1-4819-A066-A9F36F8F889F}.Debug|x64.ActiveCfg = Debug|x64
+		{4C4B1ADF-11B1-4819-A066-A9F36F8F889F}.Debug|x64.Build.0 = Debug|x64
+		{4C4B1ADF-11B1-4819-A066-A9F36F8F889F}.Debug|x86.ActiveCfg = Debug|Win32
+		{4C4B1ADF-11B1-4819-A066-A9F36F8F889F}.Debug|x86.Build.0 = Debug|Win32
+		{4C4B1ADF-11B1-4819-A066-A9F36F8F889F}.Release|x64.ActiveCfg = Release|x64
+		{4C4B1ADF-11B1-4819-A066-A9F36F8F889F}.Release|x64.Build.0 = Release|x64
+		{4C4B1ADF-11B1-4819-A066-A9F36F8F889F}.Release|x86.ActiveCfg = Release|Win32
+		{4C4B1ADF-11B1-4819-A066-A9F36F8F889F}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
