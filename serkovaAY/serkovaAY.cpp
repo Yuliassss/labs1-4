@@ -39,13 +39,10 @@ pipe input_pipe(){
     
     cout << "введите диаметр(1-100): ";
     p.diametr = get_correct_number(1, 100);
-    
-   /* p.status = "В_ремонте";
-    cout << p.status << endl;*/
 
     cout << "Выберете состояние:" << endl << "1. В_ремонте " << endl << "2. В_рабочем_состоянии " << endl;
     int i = 0;
-    i = get_correct_number(0, 7);
+    i = get_correct_number(1, 2);
     switch (i)
     {
     case 1: { p.status = "В_ремонте"; break; }
@@ -73,27 +70,18 @@ void save_pipe(const pipe& p1)
     }
 }
 
-pipe load_pipe()
-{
-    pipe p;
-    ifstream fin;
-    string marker;
-    fin.open("data.txt", ios::in);
-    if (fin.is_open())
-    {
-        do
-        {
-            fin >> marker;
-        } while (!(marker == "\n PIPE"));
-        fin >> marker;
-        fin >> p.name;
-        fin >> p.lenght;
-        fin >> p.diametr;
-        fin >> p.status;
-        fin.close();
-        return p;
-    }
-}
+//pipe load_pipe()
+//{
+//    pipe p;
+//    ifstream fin;
+//    fin.open("data.txt", ios::in);    
+//    if (fin.is_open())
+//    {        
+//        fin >> p.name >> p.lenght >> p.diametr >> p.status;
+//        fin.close();
+//        return p;
+//    }
+//}
 
 void edit_pipe(pipe& p)
 {
@@ -106,8 +94,6 @@ void edit_pipe(pipe& p)
         p.status = "В_ремонте";
     }
 }
-
-
 
 struct ks
 {
@@ -134,8 +120,14 @@ ks input_ks()
     cout << "введите эффективность(1-100): ";
     z.effectiveness = get_correct_number(1, 100);
 
-    z.status = "Цех_остановлен";
-    cout << z.status << endl;
+    cout << "Выберете состояние:" << endl << "1. Цех_остановлен " << endl << "2. Цех_запущен " << endl;
+    int i = 0;
+    i = get_correct_number(1, 2);
+    switch (i)
+    {
+    case 1: { z.status = "Цех_остановлен"; break; }
+    case 2: { z.status = " Цех_запущен";  break; }
+    }
 
     return z;
 }
@@ -156,38 +148,25 @@ void save_ks(const ks& z1)
     fout.open("data.txt", ios::app);
     if (fout.is_open())
     {
-        fout << "\n KS" << endl << z1.name << endl << z1.number_ws << endl << z1.number_ws_in_w << endl << z1.effectiveness << endl << z1.status;
+        fout << "\nKS" << endl << z1.name << endl << z1.number_ws << endl << z1.number_ws_in_w << endl << z1.effectiveness << endl << z1.status;
         fout.close();
     }
 }
 
-ks load_ks()
-{
-    ks lu;
-    ifstream fin;
-    string marker;
-    fin.open("data.txt", ios::in);
-    if (fin.is_open())
-    {       
-        do
-        {
-           fin >> marker;
-        } while (!(marker == "\n KS"));
-        fin >> lu.name;
-        fin >> lu.number_ws;
-        fin >> lu.number_ws_in_w;
-        fin >> lu.effectiveness;
-        fin >> lu.status;
-        fin.close();
+//ks load_ks()
+//{
+//    ks lu;
+//    ifstream fin;
+//    fin.open("data.txt", ios::in);
+//    if (fin.is_open())
+//    {          
+//        fin >> lu.name >> lu.number_ws >> lu.number_ws_in_w >> lu.effectiveness >> lu.status;
+//        fin.close();
+//    }
+//    return lu;
+//}
 
-
-
-    }
-    return lu;
-}
-
-void edit_ks(ks& z1)
-{
+void edit_ks(ks& z1){
     if (z1.status == "Цех_остановлен")
     {
         z1.status = "Цех_запущен";
@@ -197,6 +176,34 @@ void edit_ks(ks& z1)
         z1.status = "Цех_остановлен";
     }
 }
+
+//void load_ob(pipe& pu,ks& lu) {
+//    pipe pu;
+//    ks lu;
+//    ifstream fin;
+//    string marker;
+//
+//    fin.open("data.txt", ios::in);
+//    if (fin.is_open()) {
+//        while (getline(fin, marker))
+//        {
+//            if (marker.find(" PIPE") != string::npos)
+//            {
+//                fin.seekg(streamoff(fin.tellg()) + marker.size() + 1); // переместиться к следующей строке                 
+//                fin >> pu.name >> pu.lenght >> pu.diametr >> pu.status;
+//
+//            }
+//        }
+//        if (marker.find(" KS") != string::npos)
+//        {
+//            fin.seekg(streamoff(fin.tellg()) + marker.size() + 1); // переместиться к следующей строке
+//            lu = load_ks();
+//        }
+//    }
+//
+//    fin.close();
+//}
+
 
 void print_menu()
 {
@@ -213,89 +220,97 @@ void print_menu()
 
 }
 
-
-
-
-
 int main()
 {
     setlocale(LC_ALL, "Russian");
     pipe pu;
     ks lu;
+
+    ifstream fin;
+    string marker;
+    
     while (true)
     {
         print_menu();
-        int i =0 ;
+        int i = 0;
         i = get_correct_number(0, 7);
         switch (i)
         {
         case 1: { pu = input_pipe(); break; }
         case 2: { lu = input_ks();  break; }
-        case 3: 
-        { 
+        case 3: {
             if (pu.name.empty()) { cout << "\nОбъект труба не был добавлен " << endl; }
-            else { print_pipe(pu);}
+            else {print_pipe(pu);
+            }
             if (lu.name.empty()) { cout << "\nОбъект кс не был добавлен " << endl; }
-            else {print_ks(lu); }
+            else {print_ks(lu);}
             //if (!pu.name.empty() || !lu.name.empty()) { cout << "Объекты сохранены " << endl; }
             /*print_pipe(pu);
             print_ks(lu);*/
-
-            break; 
+            break;
         }
         case 4: {
             if (pu.name.empty()) { cout << "Объект труба не был добавлен \n"; }
-            else{ edit_pipe(pu);}
-            break; }
-        case 5: { 
+            else { edit_pipe(pu); }
+            break;
+        }
+        case 5: {
             if (lu.name.empty()) { cout << "Объект кс не был добавлен \n"; }
             else { edit_ks(lu); }
-            break; }
-        case 6: 
+            break;
+        }
+        case 6:
         {
             if (pu.name.empty()) { cout << "Объект труба не был добавлен \n"; }
             else { save_pipe(pu); }
             if (lu.name.empty()) { cout << "Объект кс не был добавлен \n"; }
             else { save_ks(lu); }
             if (!pu.name.empty() || !lu.name.empty()) { cout << "\n Объекты сохранены \n"; }
-
-            
-           
-            
-
-            break; 
+            break;
         }
         case 7: {
             /*if (pu.name.empty()) { cout << "Объект труба не был добавлен \n"; }
             else { load_pipe(); }
             if (lu.name.empty()) { cout << "Объект кс не был добавлен \n"; }
             else { load_ks(); }*/
-            ifstream fin;
-            string marker;
             fin.open("data.txt", ios::in);
-            while (fin >> marker)
-            {
-                if (marker == "PIPE")
+            if (fin.is_open()) {
+                while (getline(fin, marker))
                 {
-                    pu = load_pipe();
-                }
-                else if (marker == "KS")
-                {
-                    lu=load_ks();
-                }
+                    if (marker.find(" PIPE") != string::npos)
+                    {
+                        //fin.seekg(streamoff(fin.tellg()) + marker.size()); // переместиться к следующей строке                 
+                        fin >> pu.name >> pu.lenght >> pu.diametr >> pu.status;
+                    }
+                    if (marker.find(" KS") != string::npos)
+                    {
+                        //fin.seekg(streamoff(fin.tellg()) + marker.size()); // переместиться к следующей строке
+                        fin >> lu.name >> lu.number_ws >> lu.number_ws_in_w >> lu.effectiveness >> lu.status;
+                    }
+                }             
             }
+
+            fin.close();
             
+            /* while (fin >> marker)
+             {
+                 if (marker == "PIPE")
+                 {
+                     pu = load_pipe();
+                 }
+                 else if (marker == "KS")
+                 {
 
-
-            break; }
-        case 0: { return 0; }
-        default: {
-            cout << "произошла ошибка" << endl;
+                 }
+             }*/
+             break; }
+            case 0: { return 0; }
+            default: { cout << "произошла ошибка" << endl; }
+            }
         }
-        }
-    }
-    return 0;
+        return 0;
 }
+
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
 // Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
