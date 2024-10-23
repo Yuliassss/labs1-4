@@ -1,6 +1,6 @@
 
- PIPE
-pipa
-5543
-22
-0
+KS
+zalupa
+8
+5
+75
