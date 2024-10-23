@@ -20,8 +20,8 @@ int get_correct_number( int min, int max){
 struct pipe
 {
     string name;
-    int length;
-    int diameter;
+    double length;
+    double diameter;
     bool status;
 };
 
@@ -55,39 +55,9 @@ void print_pipe(const pipe& p){
     cout << "\nпризнак: " << p.status;
 }
 
-void save_pipe(const pipe& p){
-    ofstream fout;
-    fout.open("data.txt", ios::out);
-    if (fout.is_open())
-    {
-        fout << "\nPIPE" << endl << p.name << endl << p.length << endl << p.diameter << endl << p.status << endl;
-        fout.close();
-    }
-}
 
-pipe load_pipe(pipe& p) {
-    ifstream fin("data.txt");
-    if (fin.is_open()) {
-        string marker;
-        while (getline(fin, marker)) {
-            if (marker.find("PIPE") != string::npos) {
-                getline(fin, p.name);
-                fin >> p.length >> p.diameter >> p.status;
-                fin.ignore();
-            }
-            else
-            {
-                p.name = "";
-                p.length = 0;
-                p.diameter = 0;
-                p.status = "";
 
-            }
-        }
-        fin.close();
-    }
-    return p;
-}
+
 
 void edit_pipe(pipe& p)
 {
@@ -128,43 +98,13 @@ void print_ks(const ks& k)
     cout << "\nэффективность: " << k.effectiveness;
 }
 
-void save_ks(const ks& k)
-{
-    ofstream fout;
-    fout.open("data.txt", ios::out);
-    if (fout.is_open())
-    {
-        fout << "\nKS" << endl << k.name << endl << k.number_ws << endl << k.number_ws_in_w << endl << k.effectiveness; 
-        fout.close();
-    }
-}
 
-ks load_ks(ks& k)
-{   
-    ifstream fin("data.txt");
-    if (fin.is_open()) {
-        string marker;
-        while (getline(fin, marker)) {
-            if (marker.find("KS") != string::npos) {
-                getline(fin, k.name);
-                fin >> k.number_ws >> k.number_ws_in_w >> k.effectiveness;
-                fin.ignore(); 
-                break;
-            }
-            else
-            {
-                k.name = "";
-                k.number_ws = 0;
-                k.number_ws_in_w = 0;
-                k.effectiveness = 0;              
 
-            }
-        }
-        fin.close();
-    }
-    return k;
-    
-}
+
+
+
+
+
 
 void edit_ks( ks& ks){
     cout << "Запустите или остановите цех" << endl << "0. остановить " << endl << "1. запустить " << endl;
@@ -173,15 +113,68 @@ void edit_ks( ks& ks){
     switch (i)
     {
     case 0: { ks.number_ws_in_w--; break; }
-    case 1: { if (ks.number_ws_in_w == 12) { cout << "В работе максимальное количество цехов" << endl; }
+    case 1: { if (ks.number_ws_in_w == ks.number_ws) { cout << "В работе максимальное количество цехов" << endl; }
           else { ks.number_ws_in_w++; }  break;
     }
     }
 }
 
-void load( pipe& p, ks& k) {
-    load_pipe(p);
-    load_ks(k);
+void save_ks(ofstream& fout,const ks& k)
+{
+    fout << "\nKS" << endl << k.name << endl << k.number_ws << endl << k.number_ws_in_w << endl << k.effectiveness;
+}
+void save_pipe(ofstream& fout, const pipe& p) {
+    fout << "\nPIPE" << endl << p.name << endl << p.length << endl << p.diameter << endl << p.status ;
+}
+void save(pipe& p, ks& k) {
+    ofstream fout;
+    fout.open("data.txt", ios::out);
+    if (fout.is_open())
+    {
+        if (p.name.empty()) { cout << "Объект труба не был добавлен \n"; }
+        else { save_pipe(fout, p); }
+        if (k.name.empty()) { cout << "Объект кс не был добавлен \n"; }
+        else { save_ks(fout, k); }
+        if (!p.name.empty() || !k.name.empty()) { cout << "\nОбъекты сохранены \n"; }
+        
+    }
+    fout.close();
+
+}
+
+
+pipe load_pipe(ifstream& fin) {
+    pipe p = {};
+    {
+        getline(fin, p.name);
+        fin >> p.length >> p.diameter >> p.status;
+        fin.ignore();
+    }     
+    return p;
+}
+
+ks load_ks(ifstream& fin){
+    ks k = {};
+    {
+        getline(fin, k.name);
+        fin >> k.number_ws >> k.number_ws_in_w >> k.effectiveness;
+        fin.ignore();
+    }
+    return k;
+}
+
+void load(pipe& p, ks& k ) {
+    ifstream fin("data.txt");
+    if (fin.is_open()) {
+        string marker;
+        while (getline(fin, marker)) {
+            if (marker.find("PIPE") != string::npos)
+                p = load_pipe( fin);
+            if (marker.find("KS") != string::npos)
+                k = load_ks(fin);
+        }
+        fin.close();
+    }   
 }
 
 void print_menu(){
@@ -231,15 +224,11 @@ int main(){
         }
         case 6:
         {
-            if (p.name.empty()) { cout << "Объект труба не был добавлен \n"; }
-            else { save_pipe(p); }
-            if (k.name.empty()) { cout << "Объект кс не был добавлен \n"; }
-            else { save_ks(k); }
-            if (!p.name.empty() || !k.name.empty()) { cout << "\n Объекты сохранены \n"; }
-            break;
+            save(p, k);
+
         }
         case 7: {
-            load(p, k);           
+            load(p,k);           
             
              break; }
             case 0: { return 0; }
