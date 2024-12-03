@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4c4b1adf-11b1-4819-a066-a9f36f8f889f}</ProjectGuid>
-    <RootNamespace>serkovaproject</RootNamespace>
+    <ProjectGuid>{320acc56-490a-4c47-b208-131f9fb123ce}</ProjectGuid>
+    <RootNamespace>ooos</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -127,7 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="serkova_project.cpp" />
+    <ClCompile Include="ooos.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
