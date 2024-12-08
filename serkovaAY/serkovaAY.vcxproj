@@ -128,17 +128,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="addition.cpp" />
+    <ClCompile Include="Addition.cpp" />
     <ClCompile Include="KS.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="PipeAndKS.cpp" />
     <ClCompile Include="serkovaAY.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="addition.h" />
+    <ClInclude Include="Addition.h" />
     <ClInclude Include="KS.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="PipeAndKS.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="serkovaAY\x64\Debug\Addition.obj" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

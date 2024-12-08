@@ -24,7 +24,7 @@
     <ClCompile Include="KS.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="addition.cpp">
+    <ClCompile Include="Addition.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="PipeAndKS.cpp">
@@ -38,11 +38,16 @@
     <ClInclude Include="KS.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="addition.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="PipeAndKS.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="Addition.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="serkovaAY\x64\Debug\Addition.obj">
+      <Filter>Файлы заголовков</Filter>
+    </Object>
   </ItemGroup>
 </Project>

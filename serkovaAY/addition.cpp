@@ -1,38 +1,86 @@
-#include "addition.h"
+#include "Addition.h"
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <format>
 using namespace std;
 
-
-int ChooseActionMenu(vector<string>& menu, bool with_exit = false)
+bool CheckByEmptySet(const unordered_set<int>& id_set)
 {
-	if (menu.size() < 1)
-		return -1;
-	int i = 1;
-	for (auto& s : menu)
-		cout << std::format("{}. {}", i++, s) << "\n";
-	if (with_exit)
-		cout << "0. Exit\n";
-
-	cout << "Choose action: ";
-	return GetCorrectNumber<int>(0, menu.size());
+	if (id_set.size() == 0) {
+		cout << "Нет объектов\n";
+		return false;
+	}
+	return true;
 }
 
+string EnterLine()
+{
+	string line;
+	cin >> ws;
+	getline(cin, line);
+	return line;
+}
 
-
-//void load(pipe& p, ks& k ) {
-//    ifstream fin("data.txt");
-//    if (fin.is_open()) {
-//        string marker;
-//        while (getline(fin, marker)) {
-//            if (marker.find("PIPE") != string::npos)
-//                p = load_pipe( fin);
-//            if (marker.find("KS") != string::npos)
-//                k = load_ks(fin);
-//        }
-//        fin.close();
-//    }   
-//}
+void  Menu(int param)
+{
+	
+	switch (param)
+	{
+	case 1:
+	{
+		cout << "1.Создать трубу\n" << "2.Создать КС\n"
+			<< "3.Просмотр всех труб и станций\n"
+			<< "4.Редактировать трубу\n" << "5.Редактировать станцию\n"
+			<< "6.Сохранить\n" << "7.Загрузить\n" << "0.Выход\n";
+		break;
+	}
+	case 2:
+	{
+		cout << "1.Просмотреть трубы\n" << "2.Просмотреть станции\n"
+			<< "3.Просмотреть всё\n" << "0.Выход\n";
+		break;
+	}
+	case 3:
+	{
+		cout << "1.Редактировать трубу\n" << "2.Редактировать все трубы\n"
+			<< "3.Удалить\n" << "0.Вернуться в меню\n";
+		break;
+	}
+	case 4:
+	{
+		cout << "1.Поиск по имени\n" << "2.Поиск по статусу\n"
+			<< "3.Выберите трубы\n" << "4.Редактировать все трубы\n"
+			<< "0.Вернуться в меню\n";
+		break;
+	}
+	case 5:
+	{
+		cout <<"1.Изменить статус на противоположный\n"
+			<< "2.Измените статус на \"В ремонте\"\n"
+			<< "3.Измените статус на \"В рабочем состоянии\"\n"
+			<< "0.Веррнуться в меню\n";
+		break;
+	}
+	case 6:
+	{
+		cout << "1.Редактировать одну станцию\n" << "2.Редактировать все станции\n"
+			<< "3.Удалить\n" << "0.Вернуться в меню\n";
+		break;
+	}
+	case 7:
+	{
+		cout << "1.Поиск по названию\n"
+			<< "2.Поиск по колличеству цехов\n"/////////////
+			<< "3.Выбрать станции\n" << "4.Редактировать все станции\n"
+			<< "0.Вернуться в меню\n";
+		break;
+	}
+	case 8:
+	{
+		cout << "1.Увеличить на 1 цех\n"
+			<< "2.Уменшить на 1 цех\n"
+			<< "0.Вернуться в меню\n";
+		break;
+	}
+	default:
+		break;
+	}
+}
