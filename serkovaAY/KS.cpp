@@ -1,73 +1,102 @@
 #include "KS.h"
-#include "addition.h"
+#include "Addition.h"
 
-int KS::countID = 1;
+using namespace std;
 
-string KS::GetName() const { return name; }
-int KS::GetNumbersWs() const{ return number_ws;}
-int KS::GetNumbersInWork() const {return number_ws_in_w;}
-int KS::GetEffectiveness() const {    return effectiveness;}
-int KS::GetId() const { return id; };
-int KS::GetCountID() { return countID; };
-
-
-std::istream& operator >> (istream& in, KS& ks) {
-
-    cout << "введите название: ";
-    in >> ws;
-    getline(in, ks.name);
-
-    cout << "введите количество цехов(1-12): ";
-    ks.number_ws = get_correct_number(1, 12);
-
-    cout << "введите количество цехов в работе(1-12): ";
-    ks.number_ws_in_w = get_correct_number(1, 12);
-
-    cout << "введите эффективность(1-100): ";
-    ks.effectiveness = get_correct_number(1, 100);
-
-    return in;
-}
-
-std::ostream& operator << (ostream& out, const  KS& ks)/* вывод */
+std::istream& operator>>(std::istream& in, Station& cs)
 {
-    if ((ks.name) == "None")
-    {
-        out << "станции отсутствуют отсутствуют" << endl;
-        return out;
-    }
-    out << "KS"
-        << "\nID: " << ks.id;
-    out << "\nназвание кс: " << ks.name;
-    out << "\nколичество цехов: " << ks.number_ws;
-    out << "\nколичество цехов в работе: " << ks.number_ws_in_w;
-    out << "\nэффективность: " << ks.effectiveness;
-    return out;
+	cout << "Title: ";
+	cs.title = EnterLine();
+
+	cout << "Number of all workshops (1 - 25): ";
+	cs.all_workshop = GetCorrectNumber(1, 25);
+
+	cout << "Number of active workshops (0 - " << cs.all_workshop << "): ";
+	cs.active_workshop = GetCorrectNumber(0, cs.all_workshop);
+
+	cout << "Efficiency (0.0 - 1.0): ";
+	cs.efficiency = GetCorrectNumber(0.0, 1.0);
+
+	return in;
 }
 
-void KS::editKS()
+std::ostream& operator<<(std::ostream& out, const Station& cs)
 {
-    cout << "Запустите или остановите цех" << endl << "0. остановить " << endl << "1. запустить " << endl;
-    int i = 0;
-    i = get_correct_number(0, 1);
-    switch (i)
-    {
-    case 0: { number_ws_in_w--; break; }
-    case 1: {
-        if (number_ws_in_w == number_ws) { cout << "В работе максимальное количество цехов" << endl; }
-        else { number_ws_in_w++; }  break;
-    }
-    }
+	char symbol = 249;
+	out << "Information about CS "
+		<< "\"" << cs.title << "\":\n"
+		<< symbol << "ID: " << cs.id << "\n"
+		<< symbol << "Title: " << cs.title << "\n"
+		<< symbol << "All workshops: " << cs.all_workshop << "\n"
+		<< symbol << "Active workshops: " << cs.active_workshop << "\n"
+		<< symbol << "Efficiency: " << cs.efficiency * 100 << " %" << "\n\n";
+
+	return out;
 }
 
-void KS::save_ks(ofstream& fout, const KS& ks) const {    
-    fout << "KS" << endl << ks.GetId() << endl << ks.name << endl << ks.number_ws << endl << ks.number_ws_in_w << endl << ks.effectiveness;}
+std::ifstream& operator>>(std::ifstream& fin, Station& cs)
+{
+	fin >> cs.id;
+	fin >> ws;
+	getline(fin, cs.title);
+	fin >> cs.all_workshop;
+	fin >> cs.active_workshop;
+	fin >> cs.efficiency;
+	int id = cs.id;
+	cs.max_id = cs.max_id <= id ? cs.max_id = ++id : cs.max_id;
+	return fin;
+}
+
+std::ofstream& operator<<(std::ofstream& fout, const Station& cs)
+{
+	fout << cs.id << "\n"
+		<< cs.title << "\n"
+		<< cs.all_workshop << "\n"
+		<< cs.active_workshop << "\n"
+		<< cs.efficiency << "\n";
+	return fout;
+}
 
 
-void KS::load_ks(ifstream& fin) {///?????
-    fin >> id;
-    getline(fin, name);
-    fin >> number_ws >> number_ws_in_w >> effectiveness;
-    fin.ignore();
-    
+void Station::IncreaseActiveWS()
+{
+	if (active_workshop < all_workshop)
+		++active_workshop;
+}
+
+void Station::DecreaseActiveWS()
+{
+	if (active_workshop > 0)
+		--active_workshop;
+}
+
+void Station::ResetMaxID()
+{
+	max_id = 1;
+}
+
+
+double Station::GetPercentUnused() const
+{
+	return (1 - ((double)active_workshop / double(all_workshop))) * 100;
+}
+
+
+std::string Station::GetTitle() const
+{
+	return title;
+}
+
+
+int Station::GetId() const
+{
+	return id;
+}
+
+int Station::max_id = 1;
+
+
+Station::Station()
+{
+	id = max_id++;
 }

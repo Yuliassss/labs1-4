@@ -3,43 +3,31 @@
 #include <fstream>
 #include <string>
 
-#include <unordered_map>
 
-using namespace std;
-
-class Pipe {
-private:
-    static int max_id; // 
-    int id; // 
-    string name;//
-    double length;//
-    double diameter;//
-    
-    
+class Pipe
+{
 public:
+	bool status;
 
-    bool status;//
+	friend std::istream& operator >> (std::istream& in, Pipe& p);
+	friend std::ostream& operator << (std::ostream& out, const Pipe& p);
+	friend std::ifstream& operator >> (std::ifstream& fin, Pipe& p);
+	friend std::ofstream& operator << (std::ofstream& fout, const Pipe& p);
 
-    Pipe( string n = "", double len = 0.0, double diam = 0.0, bool stat = 0)
-        :id(max_id++), name(n), length(len), diameter(diam), status(stat)
-    {
-    };
+	std::string PrintStatus() const;
+	void ChangeStatus();
+	static void ResetMaxID();
 
-    string GetName() const ;//
-    double GetDiameter() const ;//
-    double GetLength() const ;//
-    int GetId() const ;//
-    static int GetCountID() ;
+	std::string GetKmMark() const;
+	int GetId() const;
 
-    void InitPipe();////////////////
-    friend ostream& operator << (ostream& out, const Pipe& p); //
+	Pipe();
 
-    friend ifstream& operator >> (ifstream& fin, Pipe& p);//
-    friend ofstream& operator << (ofstream& fout, const Pipe& p);//
+private:
+	static int max_id;
+	std::string km_mark;
+	float length;
+	int diameter;
+	int id;
 
-
-    void ChangeStatus();//
-
-    //friend void filter_pipes_by_name(std::unordered_map<int, Pipeline>& pipes);
-    //friend void filter_pipes_by_repair(std::unordered_map<int, Pipeline>& pipes);
 };

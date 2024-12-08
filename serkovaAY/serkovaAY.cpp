@@ -1,133 +1,101 @@
 ﻿// serkovaAY.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
 //
-
 #include <iostream>
-//#include <chrono>
-//#include <format>
-//#include <stdio.h>
+#include <chrono>
+#include <format>
+#include <stdio.h>
 #include <fstream>
-#include "PipeAndKS.h"
-#include "addition.h"
+#include "GasSupplySystem.h"
+#include "Addition.h"
 
 
 using namespace std;
+using namespace chrono;
 
-//using namespace chrono;
 
+int StartProgram(GasSupplySystem& GSS) {
 
-void print_menu() {
-    cout << "введите число (0-7): " << endl
-        << "1. Добавить трубу " << endl
-        << "2. Добавить КС " << endl
-        << "3. Просмотр всех объектов " << endl
-        << "4. Редактировать трубу " << endl
-        << "5. Редактировать КС " << endl
-        << "6. Сохранить " << endl
-        << "7. Загрузить " << endl
-        << "0. Выход " << endl;
-}
-
-int StartProgram(PipeAndKS& piks) {
     while (1)
     {
-        vector<string> menu = { "Добавить трубу",
-                                "Добавить КС",
-                                "Просмотр всех объектов",
-                                "Редактировать трубу",
-                                "Редактировать КС",
-                                "Сохранить",
-                                "Загрузить",
-                                "Выход" };
-        switch (ChooseActionMenu(menu, true))
+        Menu(1);
+        switch (GetCorrectNumber(0, 7))
         {
-        case 1: {
-            piks.AddPipe()
-            break;
-        }
-        case 2: {
-            cin >> ks;
-            piKS.GetKS().insert({ ks.GetId(), ks });
-            break;
-        }
-        case 3: {
-            auto& pipe_map = piKS.GetPipe();
-            auto& ks_map = piKS.GetKS();
+        case 1:
+        {
 
-            if (pipe_map.empty()) {
-                cout << "\nНет объектов труба." << endl;
-            }
-            else {
-                for (const auto& [key, p] : pipe_map) {
-                    cout << p << endl;
-                }
-            }
+            GSS.Add(GSS.GetPipes());
+            break;
+        }
+        case 2:
+        {
+            GSS.Add(GSS.GetCS());
+            break;
+        }
+        case 3:
+        {
+            GSS.ShowObjects();
 
-            if (ks_map.empty()) {
-                cout << "\nНет объектов КС." << endl;
-            }
-            else {
-                for (const auto& [key, ks] : ks_map) {
-                    cout << ks << endl;
-                }
-            }
             break;
         }
-        case 4: {
-            int id;
-            cout << "Введите ID трубы для редактирования: ";
-            cin >> id;
-            auto& pipe_map = piKS.GetPipe();
-            auto it = pipe_map.find(id);
-            if (it != pipe_map.end()) {
-                it->second.edit_pipe();  // Редактирование найденного объекта Pipe
-            }
-            else {
-                cout << "Труба с таким ID не найдена." << endl;
-            }
+        case 4:
+        {
+            GSS.EditPipe();
+
             break;
         }
-        case 5: {
-            int id;
-            cout << "Введите ID КС для редактирования: ";
-            cin >> id;
-            auto& ks_map = piKS.GetKS();
-            auto it = ks_map.find(id);
-            if (it != ks_map.end()) {
-                it->second.editKS();  // Редактирование найденного объекта KS
-            }
-            else {
-                cout << "КС с таким ID не найдена." << endl;
-            }
+        case 5:
+        {
+            GSS.EditCS();
             break;
         }
         case 6:
         {
-            piKS.Save();
-            break;
-
-        }
-        case 7: {
-            piKS.Load();
-
-
+            GSS.Save();
             break;
         }
-        case 0: { return 0; }
-        default: { cout << "произошла ошибка" << endl; break; }
+        case 7:
+        {
+            GSS.Load();
+            break;
         }
+        case 0:
+        {
+            return 0;
+        }
+        default:
+        {
+            cout << "Wrong action" << "\n";
+        }
+        }
+        //return 0;
     }
-    return 0;
 }
 
-int main(){
-    PipeAndKS piks;
-
+int main(int argc, char* argv[])
+{
     setlocale(LC_ALL, "Russian");
-    
-    StartProgram(piks);
+    GasSupplySystem GSS;
 
-    
- }
+    redirect_output_wrapper cerr_out(cerr);
+    string time = std::format("{:%d.%m.%Y_%H_%M_%OS}", system_clock::now() + std::chrono::hours(3));
+    ofstream out_logfile("Logging/log_" + time);
+    if (out_logfile)
+        cerr_out.redirect(out_logfile);
+
+    /*redirect_output_wrapper logg_in(cin);
+    ifstream in_logfile;
+    in_logfile.open("Logging/log_08_11_2023_21_46_41");
+    if (in_logfile)
+        logg_in.redirect(in_logfile);*/
+    StartProgram(GSS);
+}
+
+
+
+
+
+
+
 
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"

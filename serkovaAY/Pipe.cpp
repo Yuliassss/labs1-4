@@ -1,82 +1,97 @@
 #include "Pipe.h"
-#include "addition.h"
+#include "Addition.h"
 
-int Pipe::max_id = 1;//
-
-string Pipe::GetName() const { return name; };//
-double Pipe::GetDiameter() const { return diameter; };//
-double Pipe::GetLength() const { return length; };
-bool Pipe::GetStatus() const { return status; }
-int Pipe::GetId() const { return id; };//
-int Pipe::GetCountID() { return countID; };
+using namespace std;
 
 
-void Pipe::InitPipe(){
-
-    cout << "введите название: ";
-    cin >> ws;
-    getline(cin, name);
-
-    cout << "введите длину (1-100000): ";
-    length = get_correct_number(1.0, 100000.0);
-
-    cout << "введите диаметр(1-100): ";
-    diameter = get_correct_number(1.0, 100.0);
-
-    cout << "Выберете состояние:" << endl << "0. В ремонте " << endl << "1. В рабочем состоянии " << endl;
-    int i = get_correct_number(0, 1);
-    status = (i == 1);
-
-};
-
-std::ostream& operator << (ostream& out, const Pipe& p)//
-
-{   char symbol = 249;
-    out << "Информация о трубе " << endl <<
-        "\"" << p.name << "\":\n"
-        << symbol << "\nID: " << p.id
-        << symbol << "\nназвание трубы: " << p.name
-        << symbol << "\nдлина трубы: " << p.length
-        << symbol << "\nдиаметр трубы: " << p.diameter
-        << symbol << "\nпризнак: " << p.status; //////////////////////////
-    return out;
-};
-
-
-ifstream& operator>>(ifstream& fin, Pipe& p)
+istream& operator>>(istream& in, Pipe& p)
 {
-    fin >> p.id;
-    fin >> ws;
-    getline(fin, p.name);
-    fin >> p.length;
-    fin >> p.diameter;
-    fin >> p.status;
-    int id = p.id;
-    p.max_id = p.max_id <= id ? p.max_id = ++id : p.max_id;
-    return fin;
+	cout << "Kilometer mark: ";
+	p.km_mark = EnterLine();
+
+	cout << "Length (0.1 - 5000 km): ";
+	p.length = GetCorrectNumber(0.1, 5000.0);
+
+	cout << "Diameter (700 - 1400 mm): ";
+	p.diameter = GetCorrectNumber(700, 1400);
+
+	cout << "Status (\"0\" - in working condition, \"1\" - in repair): ";
+	p.status = GetCorrectNumber(0, 1);
+
+	return in;
 }
 
 
+ostream& operator<<(ostream& out, const Pipe& p)
+{
+	char symbol = 249; // marker
+	out << "Information about Pipe " <<
+		"\"" << p.km_mark << "\":\n"
+		<< symbol << " ID: " << p.id << "\n"
+		<< symbol << " Kilometer mark: " << p.km_mark << "\n"
+		<< symbol << " Length: " << p.length << " km" << "\n"
+		<< symbol << " Diameter: " << p.diameter << " mm" << "\n"
+		<< symbol << " " << p.PrintStatus() << "\n\n";
 
-
-
-void Pipe::save_pipe(ofstream & fout, const Pipe & p) const {
-    fout << "\nPIPE" << endl << p.GetId() << endl << p.GetName() << endl << p.GetLength() << endl << p.GetDiameter() << endl << p.GetStatus();
+	return out;
 }
 
-Pipe Pipe::load_pipe(ifstream& fin) {// ???????????
-    Pipe p = {};
-    {
-        fin >> p.id;
-        getline(fin, p.name);
-        fin >> p.length >> p.diameter >> p.status;
-        fin.ignore();
-        int id = p.id;
-        p.countID = p.countID <= id ? p.countID = ++id : p.countID;
-            
-    }
-    return p;
+std::ifstream& operator>>(ifstream& fin, Pipe& p)
+{
+	fin >> p.id;
+	fin >> ws;
+	getline(fin, p.km_mark);
+	fin >> p.length;
+	fin >> p.diameter;
+	fin >> p.status;
+	int id = p.id;
+	p.max_id = p.max_id <= id ? p.max_id = ++id : p.max_id;
+	return fin;
 }
 
-void Pipe::ChangeStatus() //
-{status = !status;} 
+std::ofstream& operator<<(ofstream& fout, const Pipe& p)
+{
+	fout << p.id << "\n"
+		<< p.km_mark << "\n"
+		<< p.length << "\n"
+		<< p.diameter << "\n"
+		<< p.status << "\n";
+	return fout;
+}
+
+
+string Pipe::PrintStatus() const
+{
+	return status ? "In repair" : "In Working condition";
+
+}
+
+void Pipe::ChangeStatus()
+{
+	status = !status;
+}
+
+void Pipe::ResetMaxID()
+{
+	max_id = 1;
+}
+
+
+std::string Pipe::GetKmMark() const
+{
+	return km_mark;
+}
+
+
+int Pipe::GetId() const
+{
+	return id;
+}
+
+
+int Pipe::max_id = 1;
+
+Pipe::Pipe()
+{
+	id = max_id++;
+}

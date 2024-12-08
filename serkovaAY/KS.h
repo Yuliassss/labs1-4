@@ -2,50 +2,31 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-using namespace std;
 
-class KS
+class Station
 {
-private:
-    int id;
-    string name;
-    int number_ws;
-    int number_ws_in_w;
-    int effectiveness;
-    
-
 public:
-    static int countID;
-    
-    KS(string n = "", int nw = 0, int ninw = 0, int e = 0)
-        :id(countID++), name(n), number_ws(nw), number_ws_in_w(ninw), effectiveness(e) {};
-        
-    string GetName() const;
-    int GetNumbersWs() const;
-    int GetNumbersInWork() const;
-    int GetEffectiveness() const;
+	int active_workshop;
 
-    int GetId() const;
+	friend std::istream& operator >> (std::istream& in, Station& cs);
+	friend std::ostream& operator << (std::ostream& out, const Station& cs);
+	friend std::ifstream& operator >> (std::ifstream& fin, Station& cs);
+	friend std::ofstream& operator << (std::ofstream& fout, const Station& cs);
 
-    int GetCountID();
+	void IncreaseActiveWS();
+	void DecreaseActiveWS();
+	static void ResetMaxID();
 
-    friend istream& operator >> (istream& in, KS& ks); //ввод
+	double GetPercentUnused() const;
+	std::string GetTitle() const;
+	int GetId() const;
 
-    friend ostream& operator << (ostream& out, const KS& ks); //вывод
+	Station();
 
-
-    void editKS();
-
-
-
-    void save_ks(ofstream& fout, const KS& ks) const;
-
-
-    void load_ks(ifstream& fin);
-   
-
-
+private:
+	static int max_id;
+	std::string title;
+	int all_workshop;
+	float efficiency;
+	int id;
 };
-
-   
-

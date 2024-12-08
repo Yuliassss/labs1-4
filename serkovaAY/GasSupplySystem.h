@@ -9,33 +9,35 @@
 #include "Addition.h"
 
 
-
-using namespace std;
-
-class PipeAndKS
+class GasSupplySystem
 {
 public:
 	template <typename T>
 	void Add(std::unordered_map<int, T>& objects);
+
 	template <typename T>
 	void Show(const std::unordered_map<int, T>& objects);
 	void ShowObjects();
+
 	void Save();
 	void Load();
 	void ClearSystem();
 	void EditPipe();
 	void EditCS();
+
+
 	std::unordered_map<int, Pipe>& GetPipes();
-	std::unordered_map<int, KS>& GetCS();
+	std::unordered_map<int, Station>& GetCS();
+
+
 private:
 	std::unordered_map<int, Pipe> pipe_objects;
-	std::unordered_map<int, KS> ks_objects;
-	};
+	std::unordered_map<int, Station> cs_objects;
 
-
+};
 
 template<typename T>
-inline void PipeAndKS::Add(std::unordered_map<int, T>& objects)
+inline void GasSupplySystem::Add(std::unordered_map<int, T>& objects)
 {
 	T object;
 	std::cin >> object;
@@ -43,7 +45,7 @@ inline void PipeAndKS::Add(std::unordered_map<int, T>& objects)
 }
 
 template<typename T>
-inline void PipeAndKS::Show(const std::unordered_map<int, T>& objects)
+inline void GasSupplySystem::Show(const std::unordered_map<int, T>& objects)
 {
 	if (objects.size() != 0) {
 		for (const auto& [key, object] : objects)
@@ -52,11 +54,5 @@ inline void PipeAndKS::Show(const std::unordered_map<int, T>& objects)
 		}
 	}
 	else
-		std::cout << "Нет объектов\n\n";
+		std::cout << "Not objects!\n\n";
 }
-
-
-
-
-
-
