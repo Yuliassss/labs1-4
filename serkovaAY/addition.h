@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
+#include <sstream>
 #include <string>
+#include <unordered_map>
+#include <unordered_set>
 
 template <typename T>
 T get_correct_number(T min, T max) {
@@ -12,3 +15,6 @@ T get_correct_number(T min, T max) {
     };
     return x;
 }
+
+
+int ChooseActionMenu(std::vector<std::string>& menu, bool with_exit);

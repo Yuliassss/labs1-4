@@ -3,24 +3,22 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <format>
 using namespace std;
 
 
+int ChooseActionMenu(vector<string>& menu, bool with_exit = false)
+{
+	if (menu.size() < 1)
+		return -1;
+	int i = 1;
+	for (auto& s : menu)
+		cout << std::format("{}. {}", i++, s) << "\n";
+	if (with_exit)
+		cout << "0. Exit\n";
 
-
-int print_menu() {
-    int i = 0;
-    i = get_correct_number(0, 7);
-    cout << "введите число (0-7): " << endl
-        << "1. Добавить трубу " << endl
-        << "2. Добавить КС " << endl
-        << "3. Просмотр всех объектов " << endl
-        << "4. Редактировать трубу " << endl
-        << "5. Редактировать КС " << endl
-        << "6. Сохранить " << endl
-        << "7. Загрузить " << endl
-        << "0. Выход " << endl;
-    return i;
+	cout << "Choose action: ";
+	return GetCorrectNumber<int>(0, menu.size());
 }
 
 

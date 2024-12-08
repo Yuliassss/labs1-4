@@ -60,7 +60,7 @@ void KS::editKS()
     }
 }
 
-void KS::save_ks(ofstream& fout, const KS& ks){    
+void KS::save_ks(ofstream& fout, const KS& ks) const {    
     fout << "KS" << endl << ks.GetId() << endl << ks.name << endl << ks.number_ws << endl << ks.number_ws_in_w << endl << ks.effectiveness;}
 
 

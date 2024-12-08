@@ -12,6 +12,7 @@ class PipeAndKS
 public:
 	template <typename T> void Add(std::unordered_map<int, T>& map);
 	template <typename T> void Show(std::unordered_map<int, T>& map);
+	void AddPipe();
 	void Save();
 	void Load();
 

@@ -2,38 +2,44 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+
+#include <unordered_map>
+
 using namespace std;
 
 class Pipe {
 private:
-    int id; // Уникальный ID для каждого объекта
-    string name;
-    double length;
-    double diameter;
-    bool status;
+    static int max_id; // 
+    int id; // 
+    string name;//
+    double length;//
+    double diameter;//
     
     
 public:
-    static int countID; // Статический счетчик для уникальных ID
+
+    bool status;//
+
     Pipe( string n = "", double len = 0.0, double diam = 0.0, bool stat = 0)
-        :id(countID++), name(n), length(len), diameter(diam), status(stat)
+        :id(max_id++), name(n), length(len), diameter(diam), status(stat)
     {
     };
 
-    string GetName() const ;
-    double GetDiameter() const ;
-    double GetLength() const ;
-    bool GetStatus() const;
-    int GetId() const ;
+    string GetName() const ;//
+    double GetDiameter() const ;//
+    double GetLength() const ;//
+    int GetId() const ;//
     static int GetCountID() ;
 
-    friend istream& operator >> (istream& in, Pipe& p); //ввод
+    void InitPipe();////////////////
+    friend ostream& operator << (ostream& out, const Pipe& p); //
 
-    friend ostream& operator << (ostream& out, const Pipe& p); //вывод
+    friend ifstream& operator >> (ifstream& fin, Pipe& p);//
+    friend ofstream& operator << (ofstream& fout, const Pipe& p);//
 
-    void save_pipe(ofstream& fout, const Pipe& p);
 
-    Pipe load_pipe(ifstream& fin);
+    void ChangeStatus();//
 
-    void edit_pipe();
+    //friend void filter_pipes_by_name(std::unordered_map<int, Pipeline>& pipes);
+    //friend void filter_pipes_by_repair(std::unordered_map<int, Pipeline>& pipes);
 };

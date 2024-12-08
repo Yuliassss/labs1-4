@@ -2,41 +2,53 @@
 //
 
 #include <iostream>
+//#include <chrono>
+//#include <format>
+//#include <stdio.h>
 #include <fstream>
-#include <unordered_map>
-#include <string>
-#include "pipe.h"
-#include "KS.h"
 #include "PipeAndKS.h"
-#include "addition.cpp"
+#include "addition.h"
 
 
-#include <unordered_map>
 using namespace std;
 
+//using namespace chrono;
 
 
-int main(){
-    PipeAndKS piKS;
-    Pipe p;
-    KS ks;
-    setlocale(LC_ALL, "Russian");
+void print_menu() {
+    cout << "введите число (0-7): " << endl
+        << "1. Добавить трубу " << endl
+        << "2. Добавить КС " << endl
+        << "3. Просмотр всех объектов " << endl
+        << "4. Редактировать трубу " << endl
+        << "5. Редактировать КС " << endl
+        << "6. Сохранить " << endl
+        << "7. Загрузить " << endl
+        << "0. Выход " << endl;
+}
 
-    while (true)
+int StartProgram(PipeAndKS& piks) {
+    while (1)
     {
-        print_menu();
-        int i = 0;
-        i = get_correct_number(0, 7);
-        switch (i)
+        vector<string> menu = { "Добавить трубу",
+                                "Добавить КС",
+                                "Просмотр всех объектов",
+                                "Редактировать трубу",
+                                "Редактировать КС",
+                                "Сохранить",
+                                "Загрузить",
+                                "Выход" };
+        switch (ChooseActionMenu(menu, true))
         {
         case 1: {
-            cin >> p; 
-            piKS.GetPipe().insert({ p.GetId(), p });
-            break; }
-        case 2: {   
+            piks.AddPipe()
+            break;
+        }
+        case 2: {
             cin >> ks;
-            piKS.GetKS().insert({ ks.GetId(), ks }); 
-            break; }
+            piKS.GetKS().insert({ ks.GetId(), ks });
+            break;
+        }
         case 3: {
             auto& pipe_map = piKS.GetPipe();
             auto& ks_map = piKS.GetKS();
@@ -96,14 +108,25 @@ int main(){
         }
         case 7: {
             piKS.Load();
-                 
-            
-             break; }
+
+
+            break;
+        }
         case 0: { return 0; }
         default: { cout << "произошла ошибка" << endl; break; }
         }
-     }
+    }
     return 0;
+}
+
+int main(){
+    PipeAndKS piks;
+
+    setlocale(LC_ALL, "Russian");
+    
+    StartProgram(piks);
+
+    
  }
 
 

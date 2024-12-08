@@ -38,7 +38,7 @@ public:
 
 
 
-    void save_ks(ofstream& fout, const KS& ks) ;
+    void save_ks(ofstream& fout, const KS& ks) const;
 
 
     void load_ks(ifstream& fin);

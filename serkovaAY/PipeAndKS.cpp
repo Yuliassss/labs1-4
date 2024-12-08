@@ -1,5 +1,67 @@
 #include "PipeAndKS.h"
 
+
+
+
+
+
+
+
+void PipeAndKS::AddPipe()//
+{
+	Pipe p;
+	p.InitPipe();
+	pipe_objects.insert({ p.GetId(), p });
+}
+
+void GasSupplySystem::AddCS()
+{
+	KS ks;
+	cin >> ks;
+	ks_objects.insert({ ks.GetId(), ks });
+}
+
+
+void PipeAndKS::ShowPipes()
+{
+	if (ObjectsExist(pipe_objects)) {
+		for (const auto& [id, pipe] : pipe_objects)
+		{
+			cout << pipe;
+		}
+	}
+	else
+		cout << "Not pipes!\n\n";
+}
+
+
+void PipeAndKS::ShowCS()
+{
+	if (ObjectsExist(ks_objects)) {
+		for (const auto& [id, ks] : ks_objects)
+		{
+			cout << ks;
+		}
+	}
+	else
+		cout << "Not staions!\n\n";
+}
+
+void PipeAndKS::ShortShowPipes()
+{
+	cout << "\n~ALL PIPES~\n\n";
+	for (const auto& [id, pipe] : pipe_objects) {
+		cout << "ID " << id << ": \"" << pipe.GetKmMark()
+			<< ", D: " << pipe.GetDiameter() << " mm, \""
+			<< pipe.PrintStatus() << "\"\n";
+	}
+	cout << "\n";
+}
+
+
+
+
+
 void PipeAndKS::Save()
 {
 	string filename;
@@ -14,7 +76,7 @@ void PipeAndKS::Save()
 			p.save_pipe(fout, p);
 		}
 		for (const auto& [key, ks] : ks_map) {
-			fout << ks;
+			ks.save_ks(fout, ks);
 		}
 	}
 	else {
@@ -40,7 +102,7 @@ void PipeAndKS::Load()
 
 		fin >> num_pipe >> num_ks;
 		for (int i = 0; i < num_pipe; i++) {
-			fin >> p;
+			p.load_pipe(fin);
 			pipe_map.insert({ p.GetId(), p });
 			if (p.GetId() > temp_id_p)
 				temp_id_p = p.GetId();
