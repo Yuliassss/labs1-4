@@ -6,16 +6,16 @@ using namespace std;
 
 istream& operator>>(istream& in, Pipe& p)
 {
-	cout << "Kilometer mark: ";
-	p.km_mark = EnterLine();
+	cout << "Введите имя: ";
+	p.name = EnterLine();
 
-	cout << "Length (0.1 - 5000 km): ";
+	cout << "Длина (0.1 - 5000 km): ";
 	p.length = GetCorrectNumber(0.1, 5000.0);
 
-	cout << "Diameter (700 - 1400 mm): ";
+	cout << "Диаметр (700 - 1400 mm): ";
 	p.diameter = GetCorrectNumber(700, 1400);
 
-	cout << "Status (\"0\" - in working condition, \"1\" - in repair): ";
+	cout << "Статус (\"1\" - в ремонте, \"0\" - в рабочем состоянии): ";
 	p.status = GetCorrectNumber(0, 1);
 
 	return in;
@@ -24,13 +24,13 @@ istream& operator>>(istream& in, Pipe& p)
 
 ostream& operator<<(ostream& out, const Pipe& p)
 {
-	char symbol = 249; // marker
-	out << "Information about Pipe " <<
-		"\"" << p.km_mark << "\":\n"
+	char symbol = 245; // marker
+	out << "Информация о трубе " <<
+		"\"" << p.name << "\":\n"
 		<< symbol << " ID: " << p.id << "\n"
-		<< symbol << " Kilometer mark: " << p.km_mark << "\n"
-		<< symbol << " Length: " << p.length << " km" << "\n"
-		<< symbol << " Diameter: " << p.diameter << " mm" << "\n"
+		<< symbol << " Названиеk: " << p.name << "\n"
+		<< symbol << " Длина: " << p.length << " km" << "\n"
+		<< symbol << " Диаметр: " << p.diameter << " mm" << "\n"
 		<< symbol << " " << p.PrintStatus() << "\n\n";
 
 	return out;
@@ -40,7 +40,7 @@ std::ifstream& operator>>(ifstream& fin, Pipe& p)
 {
 	fin >> p.id;
 	fin >> ws;
-	getline(fin, p.km_mark);
+	getline(fin, p.name);
 	fin >> p.length;
 	fin >> p.diameter;
 	fin >> p.status;
@@ -52,7 +52,7 @@ std::ifstream& operator>>(ifstream& fin, Pipe& p)
 std::ofstream& operator<<(ofstream& fout, const Pipe& p)
 {
 	fout << p.id << "\n"
-		<< p.km_mark << "\n"
+		<< p.name << "\n"
 		<< p.length << "\n"
 		<< p.diameter << "\n"
 		<< p.status << "\n";
@@ -62,11 +62,15 @@ std::ofstream& operator<<(ofstream& fout, const Pipe& p)
 
 string Pipe::PrintStatus() const
 {
-	return status ? "In repair" : "In Working condition";
+	return status ? "В ремонте" : "В рабочем состоянии";
 
 }
 
-void Pipe::ChangeStatus()
+void Pipe::ChangeStatus(bool new_status)
+{
+	status = new_status;
+}
+void Pipe::ToggleStatus()
 {
 	status = !status;
 }
@@ -77,9 +81,9 @@ void Pipe::ResetMaxID()
 }
 
 
-std::string Pipe::GetKmMark() const
+std::string Pipe::GetName() const
 {
-	return km_mark;
+	return  name;
 }
 
 

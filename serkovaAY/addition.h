@@ -5,25 +5,21 @@
 #include <unordered_map>
 #include <unordered_set>
 
-
-template <typename T>
 class redirect_output_wrapper
 {
-    T& stream;
+    std::ostream& stream;
     std::streambuf* const old_buf;
 public:
-    redirect_output_wrapper(T& src)
+    redirect_output_wrapper(std::ostream& src)
         :old_buf(src.rdbuf()), stream(src)
     {
-        //std::cout << "redirect_output_wrapper()\n";
     }
 
     ~redirect_output_wrapper() {
         stream.rdbuf(old_buf);
-        //std::cout << "~redirect_output_wrapper()\n";
     }
 
-    void redirect(T& dest)
+    void redirect(std::ostream& dest)
     {
         stream.rdbuf(dest.rdbuf());
     }
@@ -52,7 +48,6 @@ std::unordered_set<int> FindByFilter(std::unordered_map<int,
     return result_set;
 }
 
-
 template <typename T>
 T GetCorrectNumber(T min, T max)
 {
@@ -68,31 +63,27 @@ T GetCorrectNumber(T min, T max)
 }
 
 template <typename T>
-std::unordered_set<int> SelectByIDs(std::unordered_map<int, T>& objects)
+std::unordered_set<int> SelectByIDs(const T& objects)
 {
     std::unordered_set<int> id_set;
-    int id = 0;
+    int id;
     do {
-        std::cout << "Enter the id of pipe (\"0\" - end): ";
+        std::cout << "Enter the id (\"0\" - end): ";
         id = GetCorrectNumber(0, INT_MAX);
-        if (objects.count(id) != 0)
+        if (objects.contains(id))
             id_set.insert(id);
     } while (id != 0);
     return id_set;
 }
 
 template <typename T>
-bool CheckByEmptySystem(const std::unordered_map<int, T>& pipe_objects)
+bool ObjectsExist(const T& objects)
 {
-    if (pipe_objects.size() == 0) {
-        std::cout << "Not objects!\n";
+    if (objects.size() == 0) {
         return false;
     }
     return true;
 }
 
-
-void RedirectOstream();
-bool CheckByEmptySet(const std::unordered_set<int>& id_set);
 std::string EnterLine();
-void Menu(int param);
+int ChooseActionMenu(std::vector<std::string>& menu, bool with_exit);

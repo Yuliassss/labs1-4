@@ -5,54 +5,62 @@
 #include <iostream>
 #include <vector>
 #include "Pipe.h"
-#include "KS.h"
+#include "Station.h"
 #include "Addition.h"
 
 
 class GasSupplySystem
 {
 public:
-	template <typename T>
-	void Add(std::unordered_map<int, T>& objects);
+	void AddPipe();
+	void AddCS();
 
-	template <typename T>
-	void Show(const std::unordered_map<int, T>& objects);
-	void ShowObjects();
+	void ShowPipes();
+	void ShowCS();
+	void ShortShowPipes();
+	void ShortShowCS();
+	void ShowFoundPipes(std::unordered_set<int>& id_pipes);
+	void ShowFoundCS(std::unordered_set<int>& id_cs);
 
-	void Save();
-	void Load();
+	void Save(std::string filename);
+	void Load(std::string filename);
 	void ClearSystem();
-	void EditPipe();
-	void EditCS();
 
+	std::unordered_set<int> SearchPipesByName(std::string name);
+	std::unordered_set<int> SearchPipesByStatus(int status);
+	std::unordered_set<int> SearchPipesByIDs();
 
-	std::unordered_map<int, Pipe>& GetPipes();
-	std::unordered_map<int, Station>& GetCS();
+	template <typename T>
+	std::unordered_set<int> GetAllIDs(std::unordered_map<int, T> objs)
+	{
+		std::unordered_set<int> res;
+		for (auto& [id, obj] : objs)
+			res.emplace(id);
+		return res;
+	}
+	std::unordered_set<int> GetAllPipeIDs();
+	std::unordered_set<int> GetAllCSIDs();
 
+	void EditOnePipe(int id_pipe);
+	void ChangeStatusToOpposite(std::unordered_set<int>& id_pipes);
+	void ChangeStatus(std::unordered_set<int>& id_pipes, bool new_status);
+	void EditAllPipes();
+
+	std::unordered_set<int> SearchCSByTitle(std::string title);
+	std::unordered_set<int> SearchCSByWorkshops(double percent);
+	std::unordered_set<int> SearchCSByIDs();
+
+	void EditOneCS(int id_cs);
+	void EditCSPackage(std::unordered_set<int>& id_cs, int action);
+	void EditAllCS(int action);
+
+	void DeletePipe(int id_pipe);
+	void DeleteCS(int id_cs);
+
+	bool IsPipeObjectsEmpty();
+	bool IsCSObjectsEmpty();
 
 private:
 	std::unordered_map<int, Pipe> pipe_objects;
 	std::unordered_map<int, Station> cs_objects;
-
 };
-
-template<typename T>
-inline void GasSupplySystem::Add(std::unordered_map<int, T>& objects)
-{
-	T object;
-	std::cin >> object;
-	objects.insert({ object.GetId(), object });
-}
-
-template<typename T>
-inline void GasSupplySystem::Show(const std::unordered_map<int, T>& objects)
-{
-	if (objects.size() != 0) {
-		for (const auto& [key, object] : objects)
-		{
-			std::cout << object;
-		}
-	}
-	else
-		std::cout << "Not objects!\n\n";
-}

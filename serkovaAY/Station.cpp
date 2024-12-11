@@ -1,20 +1,20 @@
-#include "KS.h"
+#include "Station.h"
 #include "Addition.h"
 
 using namespace std;
 
 std::istream& operator>>(std::istream& in, Station& cs)
 {
-	cout << "Title: ";
+	cout << "Название: ";
 	cs.title = EnterLine();
 
-	cout << "Number of all workshops (1 - 25): ";
+	cout << "Колличество цехов (1 - 25): ";
 	cs.all_workshop = GetCorrectNumber(1, 25);
 
-	cout << "Number of active workshops (0 - " << cs.all_workshop << "): ";
+	cout << "Колличество цехов в работе (0 - " << cs.all_workshop << "): ";
 	cs.active_workshop = GetCorrectNumber(0, cs.all_workshop);
 
-	cout << "Efficiency (0.0 - 1.0): ";
+	cout << "Эффективность (0.0 - 1.0): ";
 	cs.efficiency = GetCorrectNumber(0.0, 1.0);
 
 	return in;
@@ -22,14 +22,14 @@ std::istream& operator>>(std::istream& in, Station& cs)
 
 std::ostream& operator<<(std::ostream& out, const Station& cs)
 {
-	char symbol = 249;
-	out << "Information about CS "
+	char symbol = 245;
+	out << "Информация о КС "
 		<< "\"" << cs.title << "\":\n"
 		<< symbol << "ID: " << cs.id << "\n"
-		<< symbol << "Title: " << cs.title << "\n"
-		<< symbol << "All workshops: " << cs.all_workshop << "\n"
-		<< symbol << "Active workshops: " << cs.active_workshop << "\n"
-		<< symbol << "Efficiency: " << cs.efficiency * 100 << " %" << "\n\n";
+		<< symbol << "Название: " << cs.title << "\n"
+		<< symbol << "Колличество цехов: " << cs.all_workshop << "\n"
+		<< symbol << "Колличество цехов в работе: " << cs.active_workshop << "\n"
+		<< symbol << "Эффективность: " << cs.efficiency * 100 << " %" << "\n\n";
 
 	return out;
 }

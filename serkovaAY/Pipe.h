@@ -15,17 +15,18 @@ public:
 	friend std::ofstream& operator << (std::ofstream& fout, const Pipe& p);
 
 	std::string PrintStatus() const;
-	void ChangeStatus();
+	void ToggleStatus();
+	void ChangeStatus(bool);
 	static void ResetMaxID();
 
-	std::string GetKmMark() const;
+	std::string GetName() const;
 	int GetId() const;
 
 	Pipe();
 
 private:
 	static int max_id;
-	std::string km_mark;
+	std::string name;
 	float length;
 	int diameter;
 	int id;

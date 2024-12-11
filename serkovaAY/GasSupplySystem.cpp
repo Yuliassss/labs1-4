@@ -2,54 +2,86 @@
 
 using namespace std;
 
-void GasSupplySystem::ShowObjects()
+void GasSupplySystem::AddPipe()
 {
-	Menu(2);
-	const string menu_array[2] =
-	{ "-----------------------------------------------\n"
-	"\tINFORMATION ABOUT ALL PIPES\n"
-	"-----------------------------------------------\n\n",
-	"-----------------------------------------------\n"
-	"\tINFORMATION ABOUT ALL CS\n"
-	"-----------------------------------------------\n\n" };
-	switch (GetCorrectNumber(0, 3))
-	{
-	case 1:
-	{
-		cout << menu_array[0];
-		Show(pipe_objects);
-		break;
-	}
-	case 2:
-	{
-		cout << menu_array[1];
-		Show(cs_objects);
-		break;
-	}
-	case 3:
-	{
-		cout << menu_array[0];
-		Show(pipe_objects);
-
-		cout << menu_array[1];
-		Show(cs_objects);
-		break;
-	}
-	case 0:
-	{
-		break;
-	}
-	default:
-		break;
-	}
+	Pipe p;
+	cin >> p;
+	pipe_objects.insert({ p.GetId(), p });
 }
 
-void GasSupplySystem::Save()
+void GasSupplySystem::AddCS()
 {
-	cout << "Enter the file name: ";
+	Station cs;
+	cin >> cs;
+	cs_objects.insert({ cs.GetId(), cs });
+}
 
+void GasSupplySystem::ShowPipes()
+{
+	if (ObjectsExist(pipe_objects)) {
+		for (const auto& [id, pipe] : pipe_objects)
+		{
+			cout << pipe;
+		}
+	}
+	else
+		cout << "Труб нет!\n\n";
+}
+
+void GasSupplySystem::ShowCS()
+{
+	if (cs_objects.size() != 0) {
+		for (const auto& [id, station] : cs_objects)
+		{
+			cout << station;
+		}
+	}
+	else
+		cout << "Станций нет!\n\n";
+}
+
+void GasSupplySystem::ShortShowPipes()
+{
+	for (const auto& [id, pipe] : pipe_objects) {
+		cout << "ID " << id << ": \"" << pipe.GetName()
+			<< "\", " << pipe.PrintStatus() << "\n";
+	}
+	cout << "\n";
+}
+
+void GasSupplySystem::ShortShowCS()
+{
+	for (const auto& [id, station] : cs_objects) {
+		cout << "ID " << id << ": \"" << station.GetTitle()
+			<< "\", " << "Процент неиспользуемых цехов: "
+			<< station.GetPercentUnused() << " %\n";
+	}
+	cout << "\n";
+}
+
+void GasSupplySystem::ShowFoundPipes(unordered_set<int>& id_pipes)
+{
+	for (const auto& id : id_pipes) {
+		if (pipe_objects.contains(id))
+			cout << pipe_objects.at(id) << endl;
+	}
+	cout << "\n";
+}
+
+void GasSupplySystem::ShowFoundCS(unordered_set<int>& id_cs)
+{
+	for (const auto& id : id_cs) {
+		cout << "ID " << id << ": \"" << cs_objects.at(id).GetTitle()
+			<< "\", " << "Процент неиспользуемых цехов: "
+			<< cs_objects.at(id).GetPercentUnused() << " %\n";
+	}
+	cout << "\n";
+}
+
+void GasSupplySystem::Save(string filename)
+{
 	ofstream fout;
-	fout.open("Data/" + EnterLine());
+	fout.open("Data/" + filename);
 
 	if (fout) {
 		fout << pipe_objects.size() << " "
@@ -60,20 +92,18 @@ void GasSupplySystem::Save()
 		for (const auto& [key, cs] : cs_objects) {
 			fout << cs;
 		}
-		cout << "Data is saved!" << "\n";
+		cout << "Данные сохранены!" << "\n";
 	}
-	else {
-		cout << "Error in the opening file!\n";
-	}
+	else
+		cout << "Ошибка открытия файла!\n";
 
 	fout.close();
 }
 
-void GasSupplySystem::Load()
+void GasSupplySystem::Load(string filename)
 {
-	cout << "Enter the file name: ";
 	ifstream fin;
-	fin.open("Data/" + EnterLine());
+	fin.open("Data/" + filename);
 	if (fin) {
 		int num_pipe;
 		int num_cs;
@@ -91,12 +121,10 @@ void GasSupplySystem::Load()
 			fin >> cs;
 			cs_objects.insert({ cs.GetId(), cs });
 		};
-		cout << "Data is load!" << "\n";
+		cout << "Данные загружены!" << "\n";
 	}
 	else
-	{
-		cout << "Error in the opening file!\n";
-	}
+		cout << "Ошибка открытия файла!\n";
 }
 
 void GasSupplySystem::ClearSystem()
@@ -107,9 +135,9 @@ void GasSupplySystem::ClearSystem()
 	cs_objects.clear();
 }
 
-bool CheckByKmMark(const Pipe& p, string param)
+bool CheckByName(const Pipe& p, string param)
 {
-	return (p.GetKmMark().find(param) != string::npos);
+	return (p.GetName().find(param) != string::npos);
 }
 
 bool ChekByStatus(const Pipe& p, int param)
@@ -122,374 +150,152 @@ bool CheckByTitle(const Station& cs, string param)
 	return (cs.GetTitle().find(param) != string::npos);
 }
 
-bool CheckByWorkshop(const Station& cs, double param)
+bool CheckByWorkshops(const Station& cs, double param)
 {
 	return (cs.GetPercentUnused() >= param);
 }
 
-void ShortShowPipes(const std::unordered_map<int, Pipe>& pipe_objects) {
-	cout << "\n~ALL PIPES~\n\n";
-	if (pipe_objects.size() != 0) {
-		for (const auto& [id, pipe] : pipe_objects) {
-			cout << "ID " << id << ": \"" << pipe.GetKmMark()
-				<< "\", " << pipe.PrintStatus() << "\n";
-		}
+unordered_set<int> GasSupplySystem::SearchPipesByName(string name)
+{
+	return FindByFilter(pipe_objects, CheckByName, name);
+}
+
+unordered_set<int> GasSupplySystem::SearchPipesByStatus(int status)
+{
+	return FindByFilter(pipe_objects, ChekByStatus, status);
+}
+
+unordered_set<int> GasSupplySystem::SearchPipesByIDs()
+{
+	return SelectByIDs(pipe_objects);
+}
+
+
+std::unordered_set<int> GasSupplySystem::GetAllPipeIDs()
+{
+	return GetAllIDs(pipe_objects);
+}
+
+std::unordered_set<int> GasSupplySystem::GetAllCSIDs()
+{
+	return GetAllIDs(cs_objects);
+}
+
+void GasSupplySystem::EditOnePipe(int id_pipe)
+{
+	if (pipe_objects.contains(id_pipe)) {
+		pipe_objects.at(id_pipe).ToggleStatus();
+		cout << "Статус изменен!\n";
 	}
 	else
-		cout << "Not pipes!\n";
+		cout << "Труба с введенным ID не найдена!\n";
 }
 
-void ShowFoundPipes(unordered_map<int, Pipe>& pipe_objects,
-	unordered_set<int>& id_set) {
-	cout << "\n\t~FOUND PIPES~\n\n";
-	for (auto& id : id_set) {
-		cout << "ID " << id << ": \""
-			<< pipe_objects.at(id).GetKmMark() << "\", "
-			<< pipe_objects.at(id).PrintStatus() << "\n";
-	}
-	cout << "\n";
-}
-
-void EditOnePipe(unordered_map<int, Pipe>& pipe_objects) {
-	ShortShowPipes(pipe_objects);
-	cout << "\nEnter ID of pipe: ";
-	int id = GetCorrectNumber(0, INT_MAX);
-	if (pipe_objects.count(id) != 0) {
-		pipe_objects.at(id).ChangeStatus();
-		cout << "Status was changed!\n";
+void GasSupplySystem::ChangeStatusToOpposite(unordered_set<int>& id_pipes)
+{
+	if (ObjectsExist(id_pipes))
+	{
+		for (auto& id : id_pipes)
+			if (pipe_objects.contains(id))
+				pipe_objects.at(id).ToggleStatus();
+		cout << "Статусы изменены!\n";
 	}
 	else
-		cout << "Pipe with this ID has not found!\n";
+		cout << "Трубы не найдены!\n";
 }
 
-void EditPipes(unordered_map<int, Pipe>& pipe_objects,
-	unordered_set<int>& id_set)
+void GasSupplySystem::ChangeStatus(unordered_set<int>& id_pipes, bool new_status)
 {
-	ShowFoundPipes(pipe_objects, id_set);
-	Menu(5);
-	switch (GetCorrectNumber(0, 3))
+	if (ObjectsExist(id_pipes))
 	{
-	case 1:
-	{
-		for (auto& id : id_set) {
-			pipe_objects.at(id).ChangeStatus();
-		}
-		cout << "Status was changed!\n";
-		break;
-	}
-	case 2:
-	{
-		for (auto& id : id_set) {
-			if (!pipe_objects.at(id).status)
-				pipe_objects.at(id).ChangeStatus();
-		}
-		cout << "Status was changed!\n";
-		break;
-	}
-	case 3:
-	{
-		for (auto& id : id_set) {
-			if (pipe_objects.at(id).status)
-				pipe_objects.at(id).ChangeStatus();
-		}
-		cout << "Status was changed!\n";
-		break;
-	}
-	case 0:
-	{
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-void EditPipeByStatus(unordered_map<int, Pipe>& pipe_objects,
-	unordered_set<int>& id_set)
-{
-	ShowFoundPipes(pipe_objects, id_set);
-	cout << "Change status? (0 - No, 1 - Yes): ";
-	if (GetCorrectNumber(0, 1)) {
-		for (auto& id : id_set) {
-			pipe_objects.at(id).ChangeStatus();
-		}
-		cout << "Status was changed!\n";
-	}
-}
-
-void EditAllPipes(unordered_map<int, Pipe>& pipe_objects)
-{
-	unordered_set<int> id_set;
-	for (auto& [id, pipe] : pipe_objects) {
-		id_set.insert(id);
-	}
-	if (CheckByEmptySet(id_set))
-		EditPipes(pipe_objects, id_set);
-}
-
-void EditPackagePipe(unordered_map<int, Pipe>& pipe_objects) {
-	Menu(4);
-	switch (GetCorrectNumber(0, 4))
-	{
-	case 1:
-	{
-		ShortShowPipes(pipe_objects);
-		cout << "\nEnter the kilometer mark: ";
-		unordered_set id_set = FindByFilter(pipe_objects, CheckByKmMark, EnterLine());
-		if (CheckByEmptySet(id_set))
-			EditPipes(pipe_objects, id_set);
-		break;
-	}
-	case 2:
-	{
-		ShortShowPipes(pipe_objects);
-		cout << "\nStatus (\"0\"-in working condition, \"1\"-in repair): ";
-		unordered_set id_set = FindByFilter(pipe_objects, ChekByStatus, GetCorrectNumber(0, 1));
-		if (CheckByEmptySet(id_set))
-			EditPipeByStatus(pipe_objects, id_set);
-		break;
-	}
-	case 3:
-	{
-		ShortShowPipes(pipe_objects);
-		unordered_set<int> id_set = SelectByIDs(pipe_objects);
-		if (CheckByEmptySet(id_set))
-			EditPipes(pipe_objects, id_set);
-		break;
-	}
-	case 4:
-	{
-		EditAllPipes(pipe_objects);
-	}
-	case 0:
-	{
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-void DeletePipe(unordered_map<int, Pipe>& pipe_objects) {
-	ShortShowPipes(pipe_objects);
-	cout << "\nEnter ID of pipe: ";
-	int id = GetCorrectNumber(0, INT_MAX);
-	if (pipe_objects.count(id) != 0) {
-		pipe_objects.erase(id);
-		cout << "Pipe was deleted!\n";
+		for (auto& id : id_pipes)
+			if (!pipe_objects.contains(id))
+				pipe_objects.at(id).ChangeStatus(new_status);
+		cout << "Статусы изменены!\n";
 	}
 	else
-		cout << "Pipe with this ID has not found\n";
+		cout << "Трубы не найдены!\n";
 }
 
-void GasSupplySystem::EditPipe()
+void GasSupplySystem::EditAllPipes()
 {
-	if (CheckByEmptySystem(pipe_objects)) {
-		Menu(3);
-		switch (GetCorrectNumber(0, 3))
-		{
-		case 1:
-		{
-			EditOnePipe(pipe_objects);
-			break;
-		}
-		case 2:
-		{
-			EditPackagePipe(pipe_objects);
-			break;
-		}
-		case 3:
-		{
-			DeletePipe(pipe_objects);
-			break;
-		}
-		case 0:
-		{
-			break;
-		}
-		default:
-			break;
-		}
-	}
+	for (auto& [id, pipe] : pipe_objects)
+		pipe.ToggleStatus();
 }
 
-void ShortShowStations(const std::unordered_map<int, Station>& cs_objects) {
-	cout << "\n~ALL STATIONS~\n\n";
-	if (cs_objects.size() != 0) {
-		for (const auto& [id, station] : cs_objects) {
-			cout << "ID " << id << ": \"" << station.GetTitle()
-				<< "\", " << "Percent of unused workshops: "
-				<< station.GetPercentUnused() << " %\n";
-		}
+unordered_set<int> GasSupplySystem::SearchCSByTitle(std::string title)
+{
+	return FindByFilter(cs_objects, CheckByTitle, title);
+}
+
+unordered_set<int> GasSupplySystem::SearchCSByWorkshops(double percent)
+{
+	return FindByFilter(cs_objects, CheckByWorkshops, percent);
+}
+
+unordered_set<int> GasSupplySystem::SearchCSByIDs()
+{
+	return SelectByIDs(cs_objects);
+}
+
+void GasSupplySystem::EditOneCS(int id_cs)
+{
+	if (cs_objects.contains(id_cs)) {
+		cout << "\"1\" - Увеличить,\"0\" - Уменьшить: ";
+		GetCorrectNumber(0, 1) ? cs_objects.at(id_cs).IncreaseActiveWS() :
+			cs_objects.at(id_cs).DecreaseActiveWS();
+		cout << "Колличество цехов в работе изменено\n";// << (action ? "increased" : "decreased") << "\n";
 	}
 	else
-		cout << "Not stations!\n";
+		cout << "Станция с указанным ID не найдена!\n";
 }
 
-void ShowFoundStations(unordered_map<int, Station>& cs_objects,
-	unordered_set<int>& id_set) {
-	cout << "\n\t~FOUND STATIONS~\n\n";
-	for (auto& id : id_set) {
-		cout << "ID " << id << ": \""
-			<< cs_objects.at(id).GetTitle() << "\", "
-			<< "Percent of unused workshops: "
-			<< cs_objects.at(id).GetPercentUnused() << "% \n";
-	}
-	cout << "\n";
-}
-
-void EditOneStation(unordered_map<int, Station>& cs_objects) {
-	ShortShowStations(cs_objects);
-	cout << "\nEnter ID of station: ";
-	int id = GetCorrectNumber(0, INT_MAX);
-	if (cs_objects.count(id) != 0) {
-		cout << "\"0\" - Decrease,\"1\" - Increase: ";
-		GetCorrectNumber(0, 1) ? cs_objects.at(id).IncreaseActiveWS() :
+void GasSupplySystem::EditCSPackage(
+	std::unordered_set<int>& id_cs, int action)
+{
+	for (auto& id : id_cs) {
+		action ? cs_objects.at(id).IncreaseActiveWS() :
 			cs_objects.at(id).DecreaseActiveWS();
-		cout << "The number of active workshops is changed\n";
+	}
+
+}
+
+void GasSupplySystem::EditAllCS(int action)
+{
+	for (auto& [id, cs] : cs_objects)
+		action ? cs.IncreaseActiveWS() : cs.DecreaseActiveWS();
+}
+
+void GasSupplySystem::DeletePipe(int id_pipe)
+{
+	if (pipe_objects.contains(id_pipe)) {
+		pipe_objects.erase(id_pipe);
+		cout << "труба удалена\n";
 	}
 	else
-		cout << "Station with this ID has not found!\n";
+		cout << "Труба с введенным ID не найдена!\n";
 }
 
-void EditStations(unordered_map<int, Station>& cs_objects,
-	unordered_set<int>& id_set)
+void GasSupplySystem::DeleteCS(int id_cs)
 {
-	ShowFoundStations(cs_objects, id_set);
-	Menu(8);
-	switch (GetCorrectNumber(0, 3))
-	{
-	case 1:
-	{
-		for (auto& id : id_set) {
-			cs_objects.at(id).IncreaseActiveWS();
-		}
-		cout << "The number of active workshops is changed\n";
-		break;
-	}
-	case 2:
-	{
-		for (auto& id : id_set) {
-			cs_objects.at(id).DecreaseActiveWS();
-		}
-		cout << "The number of active workshops is changed\n";
-		break;
-	}
-	case 0:
-	{
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-void EditAllStations(unordered_map<int, Station>& cs_objects)
-{
-	unordered_set<int> id_set;
-	for (auto& [id, stations] : cs_objects) {
-		id_set.insert(id);
-	}
-	if (CheckByEmptySet(id_set))
-		EditStations(cs_objects, id_set);
-}
-
-void EditPackageStation(unordered_map<int, Station>& cs_objects)
-{
-	Menu(7);
-	switch (GetCorrectNumber(0, 4))
-	{
-	case 1:
-	{
-		ShortShowStations(cs_objects);
-		cout << "\nEnter the title: ";
-		unordered_set id_set = FindByFilter(cs_objects, CheckByTitle, EnterLine());
-		if (CheckByEmptySet(id_set))
-			EditStations(cs_objects, id_set);
-		break;
-	}
-	case 2:
-	{
-		ShortShowStations(cs_objects);
-		cout << "\nPercent of unused workshops: ";
-		unordered_set id_set = FindByFilter(cs_objects, CheckByWorkshop, GetCorrectNumber(0.0, 100.0));
-		if (CheckByEmptySet(id_set))
-			EditStations(cs_objects, id_set);
-		break;
-	}
-	case 3:
-	{
-		ShortShowStations(cs_objects);
-		unordered_set<int> id_set = SelectByIDs(cs_objects);
-		if (CheckByEmptySet(id_set))
-			EditStations(cs_objects, id_set);
-		break;
-	}
-	case 4:
-	{
-		EditAllStations(cs_objects);
-		break;
-	}
-	case 0:
-	{
-		break;
-	}
-	default:
-		break;
-	}
-}
-
-void DeleteStation(unordered_map<int, Station>& cs_objects) {
-	ShortShowStations(cs_objects);
-	cout << "\nEnter ID of station: ";
-	int id = GetCorrectNumber(0, INT_MAX);
-	if (cs_objects.count(id) != 0) {
-		cs_objects.erase(id);
-		cout << "Statoin was deleted!\n";
+	if (cs_objects.contains(id_cs)) {
+		cs_objects.erase(id_cs);
+		cout << "Станция удалена\n";
 	}
 	else
-		cout << "Station with this ID has not found\n";
+		cout << "Станция с указанным ID не найдена!\n";
 }
 
-void GasSupplySystem::EditCS()
+bool GasSupplySystem::IsPipeObjectsEmpty()
 {
-	if (CheckByEmptySystem(cs_objects))
-	{
-		Menu(6);
-		switch (GetCorrectNumber(0, 3))
-		{
-		case 1:
-		{
-			EditOneStation(cs_objects);
-			break;
-		}
-		case 2:
-		{
-			EditPackageStation(cs_objects);
-			break;
-		}
-		case 3:
-		{
-			DeleteStation(cs_objects);
-			break;
-		}
-		case 0:
-		{
-
-			break;
-		}
-		default:
-			break;
-		}
-	}
+	if (pipe_objects.size() == 0)
+		return true;
+	return false;
 }
 
-std::unordered_map<int, Pipe>& GasSupplySystem::GetPipes()
+bool GasSupplySystem::IsCSObjectsEmpty()
 {
-	return pipe_objects;
-}
-
-std::unordered_map<int, Station>& GasSupplySystem::GetCS()
-{
-	return cs_objects;
+	if (cs_objects.size() == 0)
+		return true;
+	return false;
 }

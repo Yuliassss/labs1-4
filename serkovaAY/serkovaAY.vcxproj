@@ -129,14 +129,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Addition.cpp" />
-    <ClCompile Include="KS.cpp" />
+    <ClCompile Include="MainMenu.cpp" />
+    <ClCompile Include="Station.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="GasSupplySystem.cpp" />
     <ClCompile Include="serkovaAY.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Addition.h" />
-    <ClInclude Include="KS.h" />
+    <ClInclude Include="MainMenu.h" />
+    <ClInclude Include="Station.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="GasSupplySystem.h" />
     <ClInclude Include="serkovaAY.h" />
