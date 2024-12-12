@@ -141,7 +141,6 @@
     <ClInclude Include="Station.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="GasSupplySystem.h" />
-    <ClInclude Include="serkovaAY.h" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="serkovaAY\x64\Debug\Addition.obj" />

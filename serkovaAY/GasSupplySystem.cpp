@@ -209,13 +209,17 @@ void GasSupplySystem::ChangeStatus(unordered_set<int>& id_pipes, bool new_status
 	if (ObjectsExist(id_pipes))
 	{
 		for (auto& id : id_pipes)
-			if (!pipe_objects.contains(id))
-				pipe_objects.at(id).ChangeStatus(new_status);
+		{
+			auto it = pipe_objects.find(id);
+			if (it != pipe_objects.end())
+				it->second.ChangeStatus(new_status);
+		}
 		cout << "Статусы изменены!\n";
 	}
 	else
 		cout << "Трубы не найдены!\n";
 }
+
 
 void GasSupplySystem::EditAllPipes()
 {
@@ -240,7 +244,7 @@ unordered_set<int> GasSupplySystem::SearchCSByIDs()
 
 void GasSupplySystem::EditOneCS(int id_cs)
 {
-	if (cs_objects.contains(id_cs)) {
+	if (!cs_objects.contains(id_cs)) {
 		cout << "\"1\" - Увеличить,\"0\" - Уменьшить: ";
 		GetCorrectNumber(0, 1) ? cs_objects.at(id_cs).IncreaseActiveWS() :
 			cs_objects.at(id_cs).DecreaseActiveWS();

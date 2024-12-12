@@ -16,7 +16,7 @@ public:
 
 	std::string PrintStatus() const;
 	void ToggleStatus();
-	void ChangeStatus(bool);
+	bool ChangeStatus(bool&);
 	static void ResetMaxID();
 
 	std::string GetName() const;

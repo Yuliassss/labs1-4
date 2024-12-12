@@ -63,13 +63,15 @@ std::ofstream& operator<<(ofstream& fout, const Pipe& p)
 string Pipe::PrintStatus() const
 {
 	return status ? "В ремонте" : "В рабочем состоянии";
+	//return status ?  "В рабочем состоянии": "В ремонте";
 
 }
 
-void Pipe::ChangeStatus(bool new_status)
+bool Pipe::ChangeStatus(bool& new_status)
 {
-	status = new_status;
+	return status = !new_status;
 }
+\
 void Pipe::ToggleStatus()
 {
 	status = !status;

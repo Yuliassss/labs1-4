@@ -91,12 +91,14 @@ void MenuEditSelectedPipes(GasSupplySystem& gss,
 		}
 		case 2:
 		{
-			gss.ChangeStatus(id_pipes, true);
+			//gss.ChangeStatusToOpposite(id_pipes);
+			gss.ChangeStatus(id_pipes, false);
 			break;
 		}
 		case 3:
 		{
-			gss.ChangeStatus(id_pipes, false);
+			//gss.ChangeStatusToOpposite(id_pipes);
+			gss.ChangeStatus(id_pipes, true);
 			break;
 		}
 		default:
@@ -107,7 +109,7 @@ void MenuEditSelectedPipes(GasSupplySystem& gss,
 void MenuSelectionPipesByIDs(GasSupplySystem& gss,
 	unordered_set<int>& id_pipes)
 {
-	cout << " (Выберите трубы \"1\" - да, \"0\" - нет)?: ";
+	cout << " (Редактировать трубы \"1\" - да, \"0\" - нет)?: ";
 	if (GetCorrectNumber(0, 1)) {
 		id_pipes = SelectByIDs(id_pipes);
 	}
@@ -115,12 +117,13 @@ void MenuSelectionPipesByIDs(GasSupplySystem& gss,
 		MenuEditSelectedPipes(gss, id_pipes);
 }
 
-void MenuEditPipePackage(GasSupplySystem& gss)
+unordered_set<int> MenuEditPipePackage(GasSupplySystem& gss)
 {
 	unordered_set<int> found_pipes;
 	vector<string> menu = {
 		"Искать по имени", "Искать по статусу",
 		"Искать трубу (id)" };
+
 	switch (ChooseActionMenu(menu, true))
 	{
 	case 1:
@@ -139,16 +142,18 @@ void MenuEditPipePackage(GasSupplySystem& gss)
 	{
 		found_pipes = gss.SearchPipesByIDs();
 		MenuChangeStatusToOpposite(gss, found_pipes);
-		return;
+		return found_pipes; 
 	}
 	case 0:
 	{
-		return;
+		return found_pipes; 
 	}
 	}
 
 	if (FoundPipesExist(gss, found_pipes))
 		MenuSelectionPipesByIDs(gss, found_pipes);
+
+	return found_pipes; 
 }
 
 void MenuEditPipes(GasSupplySystem& gss)
@@ -163,13 +168,13 @@ void MenuEditPipes(GasSupplySystem& gss)
 		case 1:
 		{
 			cout << "Введиете ID трубы: ";
-			/*if (gss.PipeExist())*/
 			gss.EditOnePipe(GetCorrectNumber(1, INT_MAX));
 			break;
 		}
 		case 2:
 		{
 			MenuEditPipePackage(gss);
+			//gss.ChangeStatus(MenuEditPipePackage(gss));
 			break;
 		}
 		case 3:
@@ -181,15 +186,12 @@ void MenuEditPipes(GasSupplySystem& gss)
 		}
 		case 0:
 		{
-			break;
+			return;
 		}
-		default:
-			break;
 		}
 	}
 	else
-		cout << "В системе нет труб!\n";
-}
+		cout << "В системе нет труб!\n";}
 
 bool FoundCSExist(GasSupplySystem& gss, unordered_set<int> found_stations)
 {
@@ -211,7 +213,7 @@ void MenuEditCSSubpackage(GasSupplySystem& gss,
 	gss.EditCSPackage(id_stations, GetCorrectNumber(0, 1));
 }
 
-unordered_set<int> MenuSelectionCSByIDs(const unordered_set<int>& id_stations)
+unordered_set<int> MenuSelectionCSByIDs(GasSupplySystem& gss, const unordered_set<int>& id_stations)
 {
 	cout << "Выберите объекты (\"1\" - да, \"0\" - нет)?: ";
 	if (GetCorrectNumber(0, 1))
@@ -224,7 +226,7 @@ void MenuEditCSPackage(GasSupplySystem& gss)
 	unordered_set<int> found_stations;
 	vector<string> menu = {
 		"Искать по названию", "Искать по проценту неиспользуемыхцехов",
-		"Искать станцию" };
+		"Искать станцию(id)" };
 	switch (ChooseActionMenu(menu, true))
 	{
 	case 1:
@@ -252,11 +254,8 @@ void MenuEditCSPackage(GasSupplySystem& gss)
 	}
 
 	if (FoundCSExist(gss, found_stations))
-		if (found_stations.size() > 1)
-			found_stations = MenuSelectionCSByIDs(found_stations);
-
-	if (FoundCSExist(gss, found_stations))
 		MenuEditCSSubpackage(gss, found_stations);
+
 }
 
 void MenuEditCS(GasSupplySystem& gss)
@@ -289,10 +288,8 @@ void MenuEditCS(GasSupplySystem& gss)
 		}
 		case 0:
 		{
-			break;
+			return;
 		}
-		default:
-			break;
 		}
 	}
 	else

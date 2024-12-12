@@ -47,9 +47,6 @@
     <ClInclude Include="Addition.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="serkovaAY.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="MainMenu.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>

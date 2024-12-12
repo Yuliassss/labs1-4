@@ -29,7 +29,7 @@ int ChooseActionMenu(vector<string>& menu, bool with_exit = false)
 	for (auto& s : menu)
 		cout << std::format("{}. {}", i++, s) << "\n";
 	if (with_exit)
-		cout << "0. Exit\n";
+		cout << "0. Выход\n";
 
 	cout << "Выберите действие: ";
 	return GetCorrectNumber<int>(0, menu.size());
