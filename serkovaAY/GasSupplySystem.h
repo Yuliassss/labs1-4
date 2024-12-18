@@ -67,8 +67,6 @@ public:
 	bool IsPipeConnected(int id_object);
 	bool IsCSConnected(int id_cs);
 	std::vector<int> TopologicalSorting();
-	std::unordered_map<int, double> ShortestDistance(int id_cs);
-
 
 	bool PipeExist(int id_pipe);
 	bool CSExist(int id_cs);
