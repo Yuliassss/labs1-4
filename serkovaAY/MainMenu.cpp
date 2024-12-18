@@ -4,13 +4,16 @@ using namespace std;
 
 void MenuShowObjects(GasSupplySystem& gss)
 {
-	vector<string> menu = { "Показать трубы", "Показать станции", "Показать всё" };
-	const string menu_information[2] =
+	vector<string> menu = { "Показать трубы", "Показать станции", "Показать соединения", "Показать всё" };
+	const string menu_information[3] =
 	{ "-----------------------------------------------\n"
 	"\tИНФОРМАЦИЯ О ВСЕХ ТРУБАХ\n"
 	"-----------------------------------------------\n\n",
 	"-----------------------------------------------\n"
 	"\tИНФОРМАЦИЯ О ВСЕХ СТАНЦИЯХ\n"
+	"-----------------------------------------------\n\n",
+	"-----------------------------------------------\n"
+	"\tИНФОРМАЦИЯ О ВСЕХ СОЕДИНЕНИЯХ\n"
 	"-----------------------------------------------\n\n" };
 	switch (ChooseActionMenu(menu, true))
 	{
@@ -28,10 +31,18 @@ void MenuShowObjects(GasSupplySystem& gss)
 	}
 	case 3:
 	{
+		cout << menu_information[2];
+		gss.ShowConnections();
+		break;
+	}
+	case 4:
+	{
 		cout << menu_information[0];
 		gss.ShowPipes();
 		cout << menu_information[1];
 		gss.ShowCS();
+		cout << menu_information[2];
+		gss.ShowConnections();
 		break;
 	}
 	case 0:
@@ -45,25 +56,30 @@ void MenuShowObjects(GasSupplySystem& gss)
 
 void MenuSave(GasSupplySystem& gss)
 {
-	cout << "Введите имя файла: ";
+	cout << "Ввeдите название файла: ";
 	gss.Save(EnterLine());
 }
 
 void MenuLoad(GasSupplySystem& gss)
 {
-	cout << "Введите имя файла: ";
+	cout << "Ввeдите название файла:";
 	gss.Load(EnterLine());
+}
+
+int EnterPipesID()
+{
+	cout << "Введите ID трубы: ";
+	return GetCorrectNumber(1, INT_MAX);
 }
 
 bool FoundPipesExist(GasSupplySystem& gss, unordered_set<int> found_pipes)
 {
 	if (ObjectsExist(found_pipes)) {
-		cout << "\n~НАЙДЕННЫЕ ТРУБЫ~\n\n";
 		gss.ShowFoundPipes(found_pipes);
 		return true;
 	}
 	else {
-		cout << "Трубы не найдены!\n";
+		cout << "Трубы не найденыd!\n";
 		return false;
 	}
 }
@@ -75,13 +91,14 @@ void MenuChangeStatusToOpposite(GasSupplySystem& gss, unordered_set<int>& id_pip
 		gss.ChangeStatusToOpposite(id_pipes);
 }
 
-void MenuEditSelectedPipes(GasSupplySystem& gss,
-	unordered_set<int>& id_pipes)
+void MenuEditPipeSubpackage(GasSupplySystem& gss,
+	unordered_set<int>& id_pipes, bool for_status)
 {
+	if (!for_status) {
 		vector<string> menu = {
 		"Изменить статус на противоположный",
-		"Измените статус на \"В ремонте\"",
-		"Измените статус на \"В рабочем состоянии\"" };
+		"Измените статус на  \"В ремонте\"",
+		"Измените статус на  \"В рабочем состоянии\"" };
 		switch (ChooseActionMenu(menu, true))
 		{
 		case 1:
@@ -91,117 +108,131 @@ void MenuEditSelectedPipes(GasSupplySystem& gss,
 		}
 		case 2:
 		{
-			//gss.ChangeStatusToOpposite(id_pipes);
-			gss.ChangeStatus(id_pipes, false);
+			gss.ChangeStatusToRepair(id_pipes);
 			break;
 		}
 		case 3:
 		{
-			//gss.ChangeStatusToOpposite(id_pipes);
-			gss.ChangeStatus(id_pipes, true);
+			gss.ChangeStatusToWork(id_pipes);
 			break;
 		}
 		default:
 			break;
 		}
+	}
+	else
+		MenuChangeStatusToOpposite(gss, id_pipes);
 }
 
 void MenuSelectionPipesByIDs(GasSupplySystem& gss,
-	unordered_set<int>& id_pipes)
+	unordered_set<int>& id_pipes, bool for_status)
 {
-	cout << " (Редактировать трубы \"1\" - да, \"0\" - нет)?: ";
+	cout << " (Выберите трубы \"1\" - да, \"0\" - нет)?: ";
 	if (GetCorrectNumber(0, 1)) {
-		id_pipes = SelectByIDs(id_pipes);
+		unordered_set<int> found_pipes = SelectByIDs(id_pipes);
+		if (FoundPipesExist(gss, found_pipes))
+			if (found_pipes.size() > 1)
+				MenuEditPipeSubpackage(gss, found_pipes, for_status);
+			else
+				MenuChangeStatusToOpposite(gss, found_pipes);
 	}
-	if (FoundPipesExist(gss, id_pipes))
-		MenuEditSelectedPipes(gss, id_pipes);
+	else
+		MenuEditPipeSubpackage(gss, id_pipes, for_status);
 }
 
-unordered_set<int> MenuEditPipePackage(GasSupplySystem& gss)
+void MenuEditPipePackage(GasSupplySystem& gss)
 {
 	unordered_set<int> found_pipes;
+	bool for_status = false;
+	bool with_select = true;
 	vector<string> menu = {
-		"Искать по имени", "Искать по статусу",
-		"Искать трубу (id)" };
-
+		"Искать по названию", "Искать по статусу",
+		"Искать по id" };
 	switch (ChooseActionMenu(menu, true))
 	{
 	case 1:
 	{
-		cout << "Введите имя: ";
-		found_pipes = gss.SearchPipesByName(EnterLine());
+		cout << "Введите название: ";
+		found_pipes = gss.SearchPipesByKmMark(EnterLine());
 		break;
 	}
 	case 2:
 	{
 		cout << "Введите статус (\"1\"-в ремонте, \"0\"-в рабочем состоянии): ";
 		found_pipes = gss.SearchPipesByStatus(GetCorrectNumber(0, 1));
+		for_status = true;
 		break;
 	}
 	case 3:
 	{
 		found_pipes = gss.SearchPipesByIDs();
-		MenuChangeStatusToOpposite(gss, found_pipes);
-		return found_pipes; 
+		with_select = false;
+		break;
 	}
 	case 0:
 	{
-		return found_pipes; 
+		break;
 	}
+	default:
+		break;
 	}
 
-	if (FoundPipesExist(gss, found_pipes))
-		MenuSelectionPipesByIDs(gss, found_pipes);
+	if (FoundPipesExist(gss, found_pipes)) {
+		if (with_select && found_pipes.size() > 1)
+			MenuSelectionPipesByIDs(gss, found_pipes, for_status);
+		else
+			MenuChangeStatusToOpposite(gss, found_pipes);
+	}
 
-	return found_pipes; 
 }
 
 void MenuEditPipes(GasSupplySystem& gss)
 {
 	if (!gss.IsPipeObjectsEmpty()) {
-		vector<string> menu = { "редактировать одну трубу",
-			"Редактировать выбранные трубы", "Редактировать все трубы" };
-		cout << "\n~ВСЕ ТРУБЫ~\n\n";
+		vector<string> menu = { "Изменить одну трубу",
+			"Изменить выбранные трубы", "Изменить все трубы" };
 		gss.ShortShowPipes();
 		switch (ChooseActionMenu(menu, true))
 		{
 		case 1:
 		{
-			cout << "Введиете ID трубы: ";
-			gss.EditOnePipe(GetCorrectNumber(1, INT_MAX));
+			gss.EditOnePipe(EnterPipesID());
 			break;
 		}
 		case 2:
 		{
 			MenuEditPipePackage(gss);
-			//gss.ChangeStatus(MenuEditPipePackage(gss));
 			break;
 		}
 		case 3:
 		{
-			auto all_id = gss.GetAllPipeIDs();
-			MenuEditSelectedPipes(gss, all_id);
-			cout << "Статусы всех труб изменены\n";
+			gss.EditAllPipes();
 			break;
 		}
 		case 0:
 		{
-			return;
+			break;
 		}
+		default:
+			break;
 		}
 	}
-	else
-		cout << "В системе нет труб!\n";}
+}
+
+int EnterStationsID()
+{
+	cout << "Введите ID станции: ";
+	return GetCorrectNumber(0, INT_MAX);
+}
 
 bool FoundCSExist(GasSupplySystem& gss, unordered_set<int> found_stations)
 {
 	if (ObjectsExist(found_stations)) {
-		cout << "\n~Найденные станции~\n\n";
 		gss.ShowFoundCS(found_stations);
 		return true;
 	}
 	else {
-		cout << "Станции не найдены\n";
+		cout << "Станции не найдены!\n";
 		return false;
 	}
 }
@@ -209,29 +240,35 @@ bool FoundCSExist(GasSupplySystem& gss, unordered_set<int> found_stations)
 void MenuEditCSSubpackage(GasSupplySystem& gss,
 	unordered_set<int>& id_stations)
 {
-	cout << "\"1\" - Увеличить ,\"0\" - Уменьшить: ";
+	cout << "\"1\" - Увеличить,\"0\" - Уменьшить: ";
 	gss.EditCSPackage(id_stations, GetCorrectNumber(0, 1));
 }
 
-unordered_set<int> MenuSelectionCSByIDs(GasSupplySystem& gss, const unordered_set<int>& id_stations)
+void MenuSelectionCSByIDs(GasSupplySystem& gss,
+	unordered_set<int>& id_stations)
 {
-	cout << "Выберите объекты (\"1\" - да, \"0\" - нет)?: ";
-	if (GetCorrectNumber(0, 1))
-		return SelectByIDs(id_stations);
-	return id_stations;
+	cout << " (Выберите станции\"1\" - да, \"0\" - нет)?: ";
+	if (GetCorrectNumber(0, 1)) {
+		unordered_set<int> found_stations = SelectByIDs(id_stations);
+		if (FoundCSExist(gss, found_stations))
+			MenuEditCSSubpackage(gss, found_stations);
+	}
+	else
+		MenuEditCSSubpackage(gss, id_stations);
 }
 
 void MenuEditCSPackage(GasSupplySystem& gss)
 {
 	unordered_set<int> found_stations;
 	vector<string> menu = {
-		"Искать по названию", "Искать по проценту неиспользуемыхцехов",
-		"Искать станцию(id)" };
+		"Искать по названию", "Поиск по проценту неиспользуемых цехов",
+		"Искать по id" };
+	bool with_select = true;
 	switch (ChooseActionMenu(menu, true))
 	{
 	case 1:
 	{
-		cout << "Введите название: ";
+		cout << "Введите название ";
 		found_stations = gss.SearchCSByTitle(EnterLine());
 		break;
 	}
@@ -244,17 +281,24 @@ void MenuEditCSPackage(GasSupplySystem& gss)
 	case 3:
 	{
 		found_stations = gss.SearchCSByIDs();
-		MenuEditCSSubpackage(gss, found_stations);
-		return;
+		with_select = false;
+		break;
 	}
 	case 0:
 	{
-		return;
+		break;
 	}
+	default:
+		break;
 	}
 
-	if (FoundCSExist(gss, found_stations))
-		MenuEditCSSubpackage(gss, found_stations);
+	if (FoundCSExist(gss, found_stations)) {
+		if (with_select && found_stations.size() > 1)
+			MenuSelectionCSByIDs(gss, found_stations);
+
+		else
+			MenuEditCSSubpackage(gss, found_stations);
+	}
 
 }
 
@@ -263,14 +307,12 @@ void MenuEditCS(GasSupplySystem& gss)
 	if (!gss.IsCSObjectsEmpty()) {
 		vector<string> menu = { "Редактировать одну станцию",
 			"Редактировать выбранные станции", "Редактировать все станции" };
-		cout << "\n~ВСЕ СТАНЦИИ~\n\n";
 		gss.ShortShowCS();
 		switch (ChooseActionMenu(menu, true))
 		{
 		case 1:
 		{
-			cout << "Введит ID станции: ";
-			gss.EditOneCS(GetCorrectNumber(1, INT_MAX));
+			gss.EditOneCS(EnterStationsID());
 			break;
 		}
 		case 2:
@@ -283,160 +325,184 @@ void MenuEditCS(GasSupplySystem& gss)
 
 			cout << "\"1\" - Увеличить,\"0\" - Уменьшить: ";
 			gss.EditAllCS(GetCorrectNumber(0, 1));
-			cout << "Изменено количество неиспользуемых цехов!\n";
 			break;
 		}
 		case 0:
 		{
-			return;
+			break;
 		}
+		default:
+			break;
 		}
-	}
-	else
-		cout << "В системе нет станций!\n";
-}
-
-
-
-void MenuDeletePipePackage(GasSupplySystem& gss)
-{
-	unordered_set<int> found_pipes;
-	vector<string> menu = {
-		"Удалить трубу по имени",
-		"Удалить трубу по статусу",
-		"Удалить трубу по ID"
-	};
-
-	switch (ChooseActionMenu(menu, true))
-	{
-	case 1:
-	{
-		cout << "Введите имя трубы для удаления: ";
-		found_pipes = gss.SearchPipesByName(EnterLine());
-		break;
-	}
-	case 2:
-	{
-		cout << "Введите статус трубы для удаления (\"1\"-в ремонте, \"0\"-в рабочем состоянии): ";
-		found_pipes = gss.SearchPipesByStatus(GetCorrectNumber(0, 1));
-		break;
-	}
-	case 3:
-	{
-		cout << "Введите ID трубы для удаления: ";
-		int id = GetCorrectNumber(1, INT_MAX);
-		found_pipes.insert(id);
-		break;
-	}
-	case 0:
-	{
-		break;
-	}
-	default:
-		break;
-	}
-
-	if (FoundPipesExist(gss, found_pipes)) {
-		for (int pipe_id : found_pipes) {
-			gss.DeletePipe(pipe_id);
-		}
-		cout << "Трубы успешно удалены." << endl;
-	}
-	else {
-		cout << "Не найдено труб для удаления." << endl;
 	}
 }
 
-void MenuDeleteCSPackage(GasSupplySystem& gss)
+void MenuDeletePipe(GasSupplySystem& gss)
 {
-	unordered_set<int> found_stations;
-	vector<string> menu = {
-		"Удалить станцию по названию",
-		"Удалить станцию по проценту неиспользуемых цехов",
-		"Удалить станцию по ID"
-	};
-
-	switch (ChooseActionMenu(menu, true))
-	{
-	case 1:
-	{
-		cout << "Введите название станции для удаления: ";
-		found_stations = gss.SearchCSByTitle(EnterLine());
-		break;
-	}
-	case 2:
-	{
-		cout << "Введите процент неиспользуемых цехов для удаления: ";
-		found_stations = gss.SearchCSByWorkshops(GetCorrectNumber(0.0, 100.0));
-		break;
-	}
-	case 3:
-	{
-		cout << "Введите ID станции для удаления: ";
-		int id = GetCorrectNumber(1, INT_MAX);
-		found_stations.insert(id);
-		break;
-	}
-	case 0:
-	{
-		break;
-	}
-	default:
-		break;
-	}
-
-	if (FoundCSExist(gss, found_stations)) {
-		for (int station_id : found_stations) {
-			gss.DeleteCS(station_id);
+	if (!gss.IsPipeObjectsEmpty()) {
+		int id_pipe = EnterPipesID();
+		if (gss.IsPipeConnected(id_pipe)) {
+			cout << "Труба является частью графа.\n"
+				<< "Вы хотите удалить? (\"1\" - да, \"0\" - нет): ";
+			if (GetCorrectNumber(0, 1))
+				gss.DeletePipe(id_pipe);
 		}
-		cout << "Станции успешно удалены." << endl;
+		else
+			gss.DeletePipe(id_pipe);
 	}
-	else {
-		cout << "Не найдено станций для удаления." << endl;
+}
+
+void MenuDeleteCS(GasSupplySystem& gss)
+{
+	if (!gss.IsCSObjectsEmpty()) {
+		int id_cs = EnterStationsID();
+		if (gss.IsCSConnected(id_cs)) {
+			cout << "Станция является частью графа.\n"
+				<< "Вы хотите удалить? (\"1\" - да, \"0\" - нет): ";
+			if (GetCorrectNumber(0, 1))
+				gss.DeleteCS(id_cs);
+		}
+		else
+			gss.DeleteCS(id_cs);
 	}
 }
 
 void MenuDelete(GasSupplySystem& gss)
 {
-	vector<string> menu = { "Удалить трубу", "Удалить станцию", "Удалить выбранные трубы", "Удалить выбранные станции" };
-	cout << "\n~ВСЕ ТРУБЫ~\n\n";
-	gss.ShortShowPipes();
-	cout << "\n~ВСЕ СТАНЦИИ~\n\n";
-	gss.ShortShowCS();
-
+	vector<string> menu = { "Удалить трубу", "Удалить станцию", "Удалить соединение" };
 	switch (ChooseActionMenu(menu, true))
 	{
 	case 1:
 	{
-		if (!gss.IsPipeObjectsEmpty()) {
-			cout << "Введите id трубы: ";
-			gss.DeletePipe(GetCorrectNumber(1, INT_MAX));
-		}
-		else
-			cout << "В системе нет труб!\n";
+		MenuDeletePipe(gss);
 		break;
 	}
 	case 2:
 	{
-		if (!gss.IsCSObjectsEmpty()) {
-			cout << "Введите id станции: ";
-			gss.DeleteCS(GetCorrectNumber(1, INT_MAX));
-		}
-		else
-			cout << "В системе нет станций!\n";
+		MenuDeleteCS(gss);
 		break;
 	}
 	case 3:
 	{
-		MenuDeletePipePackage(gss);
+		gss.DeleteConnection(EnterPipesID());
 		break;
 	}
-	case 4:
+	case 0:
 	{
-		MenuDeleteCSPackage(gss);
 		break;
 	}
 	default:
 		break;
+	}
+}
+
+void EnteringIDs(int& id_out, int& id_in)
+{
+	cout << "Введите первую станцию: ";
+	id_out = GetCorrectNumber(1, INT_MAX);
+	cout << "Введите вторую станцию: ";
+	id_in = GetCorrectNumber(1, INT_MAX);
+
+	while (id_out == id_in) {
+		cout << "ID совпадают! Введите еще раз\n";
+		cout << "Введите первую станцию: ";
+		id_out = GetCorrectNumber(1, INT_MAX);
+		cout << "Enter  вторую станцию: ";
+		id_in = GetCorrectNumber(1, INT_MAX);
+	}
+}
+
+void MenuConnectStations(GasSupplySystem& gss)
+{
+	gss.ShortShowPipes();
+	gss.ShortShowCS();
+	gss.ShowConnections();
+	int id_out;
+	int id_in;
+	EnteringIDs(id_out, id_in);
+
+	if (gss.CSExist(id_in) && gss.CSExist(id_out)) {
+		int diameter = Pipe::EnterCorrectDiameter();
+		unordered_set<int> found_pipes = gss.SearchFreePipesByDiameters(diameter);
+
+		if (ObjectsExist(found_pipes)) {
+			gss.ShowFoundPipes(found_pipes);
+			int id_pipe = EnterPipesID();
+			if (found_pipes.contains(id_pipe))
+				gss.ConnectStations(id_out, id_in, id_pipe);
+			else
+				cout << "Труба с таким id отсутствует в найденных трубах!\n";
+		}
+		else {
+			cout << "Свободных труб с таким диаметром нет!\n" <<
+				"Хотите создать (\"1\" - да, \"0\" - нет)?: ";
+			if (GetCorrectNumber(0, 1)) {
+				Pipe p = gss.AddPipe(diameter);
+				gss.ConnectStations(id_out, id_in, p.GetId());
+			}
+
+		}
+	}
+	else
+		cout << "Станции не найдены!\n";
+}
+
+inline void MenuTopologicalSorting(GasSupplySystem& gss)
+{
+	vector<int> result = gss.TopologicalSorting();
+	if (ObjectsExist(result)) {
+		cout << "ТОПОЛОГИЧЕСКАЯ СОРТИРОВКА: ";
+		for (auto& id_cs : result)
+			cout << id_cs << " ";
+		cout << "\n";
+	}
+	else
+		cout << "Топологическая сортировка невозможна. Существуют циклы!\n";
+}
+
+void MenuShortestDistance(GasSupplySystem& gss)
+{
+
+}
+
+void MenuMaxFlow(GasSupplySystem& gss)
+{
+
+}
+
+void MenuNetwork(GasSupplySystem& gss)
+{
+	vector<string> menu = { "Соединить станции", "Топологическая сортировка",
+	"Кратчайшее расстояние", "Максимальный поток" };
+	if (!gss.IsCSObjectsEmpty() && !gss.IsPipeObjectsEmpty()) {
+		switch (ChooseActionMenu(menu, true))
+		{
+		case 1:
+		{
+			MenuConnectStations(gss);
+			break;
+		}
+		case 2:
+		{
+			MenuTopologicalSorting(gss);
+			break;
+		}
+		case 3:
+		{
+			MenuShortestDistance(gss);
+			break;
+		}
+		case 4:
+		{
+			MenuMaxFlow(gss);
+			break;
+		}
+		case 0:
+		{
+			break;
+		}
+		default:
+			break;
+		}
 	}
 }

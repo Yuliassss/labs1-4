@@ -1,4 +1,5 @@
-﻿#include <iostream>
+﻿
+#include <iostream>
 #include <chrono>
 #include <format>
 #include <stdio.h>
@@ -7,18 +8,15 @@
 #include "Addition.h"
 #include "MainMenu.h"
 
-
 using namespace std;
 using namespace chrono;
-
 
 int StartProgram(GasSupplySystem& GSS) {
 
     while (1)
     {
-        vector<string> menu = { "Добавить трубу", "Добавить КС",
-            "Показать трубы и кс",
-            "Редактировать трубу", "Редактировать станцию", "Удалить",
+        vector<string> menu = { "Добавить трубу", "Добавить КС", "Показать трубы и кс",
+            "Редактировать трубу", "Редактировать станцию","Удалить","Соединиь станции",
             "Сохранить", "Загрузить" };
         switch (ChooseActionMenu(menu, true))
         {
@@ -55,10 +53,15 @@ int StartProgram(GasSupplySystem& GSS) {
         }
         case 7:
         {
-            MenuSave(GSS);
+            MenuNetwork(GSS);
             break;
         }
         case 8:
+        {
+            MenuSave(GSS);
+            break;
+        }
+        case 9:
         {
             MenuLoad(GSS);
             break;

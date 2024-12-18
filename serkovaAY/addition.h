@@ -85,5 +85,14 @@ bool ObjectsExist(const T& objects)
     return true;
 }
 
+template <typename T>
+T Min(T A, T B)
+{
+    if (A <= B)
+        return A;
+    else
+        return B;
+}
+
 std::string EnterLine();
 int ChooseActionMenu(std::vector<std::string>& menu, bool with_exit);
