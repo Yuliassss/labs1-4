@@ -8,128 +8,114 @@ int Pipe::pipe_diameters[] = { 500, 700, 1000, 1400 };
 
 int Pipe::EnterCorrectDiameter()
 {
-	cout << "Диаметр (500, 700, 1000, 1400 mm): ";
-	int diameter = GetCorrectNumber(1, INT_MAX);
-	while (!count(begin(pipe_diameters), end(pipe_diameters), diameter)) {
-		cout << "Выберите диаметр (500, 700, 1000, 1400 mm): ";
-		diameter = GetCorrectNumber(1, INT_MAX);
-	}
-	return diameter;
+    cout << "Диаметр (500, 700, 1000, 1400 мм): ";
+    int diameter = GetCorrectNumber(1, INT_MAX);
+    while (!count(begin(pipe_diameters), end(pipe_diameters), diameter)) {
+        cout << "Введите корректный диаметр (500, 700, 1000, 1400 мм): ";
+        diameter = GetCorrectNumber(1, INT_MAX);
+    }
+    return diameter;
 }
 
 string Pipe::PrintStatus() const
 {
-	return status ? "В ремонте" : "В рабочем состоянии";
-
+    return status ? "В ремонте" : "В рабочем состоянии";
 }
 
 void Pipe::ChangeStatus()
 {
-	status = !status;
+    status = !status;
 }
 
 void Pipe::ResetMaxID()
 {
-	max_id = 1;
+    max_id = 1;
 }
 
 std::string Pipe::GetKmMark() const
 {
-	return km_mark;
+    return km_mark;
 }
 
 int Pipe::GetDiameter() const
 {
-	return diameter;
+    return diameter;
 }
 
 double Pipe::GetLength() const
 {
-	return length;
+    return status ? DBL_MAX : length;
+}
+
+double Pipe::GetCapacity() const
+{
+    return status ? 0 : length;
 }
 
 int Pipe::GetId() const
 {
-	return id;
+    return id;
 }
 
 void Pipe::SetDiameter(int d)
 {
-	diameter = d;
+    diameter = d;
 }
 
 Pipe::Pipe()
 {
-	id = max_id++;
+    id = max_id++;
 }
-
-//istream& operator>>(istream& in, Pipe& p)
-//{
-//
-//	cout << "Kilometer mark: ";
-//	p.km_mark = EnterLine();
-//
-//	cout << "Length (0.1 - 5000 km): ";
-//	p.length = GetCorrectNumber(0.1, 5000.0);
-//
-//	p.diameter = p.EnterCorrectDiameter();
-//
-//	cout << "Status (\"1\" - in repair, \"0\" - in working condition): ";
-//	p.status = GetCorrectNumber(0, 1);
-//
-//	return in;
-//}
 
 void Pipe::InitPipe(int diam)
 {
-	cout << "Введите название: ";
-	km_mark = EnterLine();
+    cout << "Название: ";
+    km_mark = EnterLine();
 
-	cout << "Введите длину (0.1 - 5000 km): ";
-	length = GetCorrectNumber(0.1, 5000.0);
+    cout << "Длина (0.1 - 5000 км): ";
+    length = GetCorrectNumber(0.1, 5000.0);
 
-	if (!diam)
-		diameter = EnterCorrectDiameter();
-	else
-		diameter = diam;
+    if (!diam)
+        diameter = EnterCorrectDiameter();
+    else
+        diameter = diam;
 
-	cout << "Статус (\"1\" - В ремонте, \"0\" - В рабочем состоянии): ";
-	status = GetCorrectNumber(0, 1);
+    cout << "Статус (\"1\" - в ремонте, \"0\" - в рабочем состоянии): ";
+    status = GetCorrectNumber(0, 1);
 }
 
 ostream& operator<<(ostream& out, const Pipe& p)
 {
-	char symbol = 245; // marker
-	out << "Информация о трубе " <<
-		"\"" << p.km_mark << "\":\n"
-		<< symbol << " ID: " << p.id << "\n"
-		<< symbol << " Название: " << p.km_mark << "\n"
-		<< symbol << " длина: " << p.length << " km" << "\n"
-		<< symbol << " Диаметр: " << p.diameter << " mm" << "\n"
-		<< symbol << " " << p.PrintStatus() << "\n\n";
+    char symbol = 245; // marker
+    out << "Информация о трубе \"" << p.km_mark << "\":\n"
+        << symbol << " ID: " << p.id << "\n"
+        << symbol << " Название: " << p.km_mark << "\n"
+        << symbol << " Длина: " << p.length << " км" << "\n"
+        << symbol << " Диаметр: " << p.diameter << " мм" << "\n"
+        << symbol << " " << p.PrintStatus() << "\n\n";
 
-	return out;
+    return out;
 }
 
 ifstream& operator>>(ifstream& fin, Pipe& p)
 {
-	fin >> p.id;
-	fin >> ws;
-	getline(fin, p.km_mark);
-	fin >> p.length;
-	fin >> p.diameter;
-	fin >> p.status;
-	int id = p.id;
-	p.max_id = p.max_id <= id ? p.max_id = ++id : p.max_id;
-	return fin;
+    fin >> p.id;
+    fin >> ws;
+    getline(fin, p.km_mark);
+    fin >> p.length;
+    fin >> p.diameter;
+    fin >> p.status;
+    int id = p.id;
+    p.max_id = p.max_id <= id ? p.max_id = ++id : p.max_id;
+    return fin;
 }
 
 ofstream& operator<<(ofstream& fout, const Pipe& p)
 {
-	fout << p.id << "\n"
-		<< p.km_mark << "\n"
-		<< p.length << "\n"
-		<< p.diameter << "\n"
-		<< p.status << "\n";
-	return fout;
+    fout << p.id << "\n"
+        << p.km_mark << "\n"
+        << p.length << "\n"
+        << p.diameter << "\n"
+        << p.status << "\n";
+    return fout;
 }

@@ -1,5 +1,4 @@
-﻿
-#include <iostream>
+﻿#include <iostream>
 #include <chrono>
 #include <format>
 #include <stdio.h>
@@ -15,14 +14,13 @@ int StartProgram(GasSupplySystem& GSS) {
 
     while (1)
     {
-        vector<string> menu = { "Добавить трубу", "Добавить КС", "Показать трубы и кс",
-            "Редактировать трубу", "Редактировать станцию","Удалить","Соединиь станции",
-            "Сохранить", "Загрузить" };
+        vector<string> menu = { "Добавить трубу", "Добавить КС",
+            "Показать", "Редактировать трубу", "Редактировать станцию",
+            "Удалить", "Сеть", "Сохранить", "Загрузить" };
         switch (ChooseActionMenu(menu, true))
         {
         case 1:
         {
-
             GSS.AddPipe();
             break;
         }
@@ -72,7 +70,7 @@ int StartProgram(GasSupplySystem& GSS) {
         }
         default:
         {
-            cout << "Wrong action" << "\n";
+            cout << "Неверное действие" << "\n";
         }
         }
     }
@@ -81,7 +79,6 @@ int StartProgram(GasSupplySystem& GSS) {
 int main(int argc, char* argv[])
 {
     std::setlocale(LC_ALL, "Russian");
-
     GasSupplySystem GSS;
     redirect_output_wrapper cerr_out(cerr);
     string time = std::format("{:%d.%m.%Y_%H_%M_%OS}", system_clock::now() + std::chrono::hours(3));
@@ -91,10 +88,4 @@ int main(int argc, char* argv[])
 
     StartProgram(GSS);
 }
-
-
-
-
-
-
 

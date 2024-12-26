@@ -8,35 +8,37 @@
 class Pipe
 {
 public:
-	bool status;
+	bool status;//
 
 	static int EnterCorrectDiameter();
 
 	std::string PrintStatus() const;
-	void ChangeStatus();
+	void ChangeStatus();//
 	static void ResetMaxID();
 
-	std::string GetKmMark() const;
-	int GetDiameter() const;
-	double GetLength() const;
-	int GetId() const;
+	std::string GetKmMark() const;//
+	int GetDiameter() const;//
+	double GetLength() const;//
+	double GetCapacity() const;
+	int GetId() const;//
 
 	void SetDiameter(int d);
 
 	Pipe();
 
-	void InitPipe(int diam = 0);
+	void InitPipe(int diam = 0);///////////////////
 	//friend std::istream& operator >> (std::istream& in, Pipe& p);
-	friend std::ostream& operator << (std::ostream& out, const Pipe& p);
+	friend std::ostream& operator << (std::ostream& out, const Pipe& p);//
 
-	friend std::ifstream& operator >> (std::ifstream& fin, Pipe& p);
-	friend std::ofstream& operator << (std::ofstream& fout, const Pipe& p);
+	friend std::ifstream& operator >> (std::ifstream& fin, Pipe& p);//
+	friend std::ofstream& operator << (std::ofstream& fout, const Pipe& p);//
 
 private:
-	static int max_id;
-	std::string km_mark;
-	float length;
+	static int max_id;//
+	std::string km_mark;//
+	float length;//
 	static int pipe_diameters[];
-	int diameter;
-	int id;
+	int diameter;//
+	int id;//
 };
+

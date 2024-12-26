@@ -1,3 +1,4 @@
+
 #include "GasSupplySystem.h"
 
 using namespace std;
@@ -7,7 +8,7 @@ bool CheckByKmMark(const Pipe& p, string param)
 	return (p.GetKmMark().find(param) != string::npos);
 }
 
-bool ChekByStatus(const Pipe& p, int param)
+bool CheckByStatus(const Pipe& p, int param)
 {
 	return (p.status == param);
 }
@@ -89,7 +90,7 @@ void GasSupplySystem::ShortShowCS()
 	cout << "\n~ВСЕ СТАНЦИИ~\n\n";
 	for (const auto& [id, station] : cs_objects) {
 		cout << "ID " << id << ": \"" << station.GetTitle()
-			<< "\", " << "Процент неиспользуемых цехов: "
+			<< "\", " << "Процент неиспользуемых мастерских: "
 			<< station.GetPercentUnused() << " %\n";
 	}
 	cout << "\n";
@@ -111,7 +112,7 @@ void GasSupplySystem::ShowFoundCS(unordered_set<int>& id_cs)
 	cout << "\n~НАЙДЕННЫЕ СТАНЦИИ~\n\n";
 	for (const auto& id : id_cs) {
 		cout << "ID " << id << ": \"" << cs_objects.at(id).GetTitle()
-			<< "\", " << "Процент неиспользуемых цехов: "
+			<< "\", " << "Процент неиспользуемых мастерских: "
 			<< cs_objects.at(id).GetPercentUnused() << " %\n";
 	}
 	cout << "\n";
@@ -121,8 +122,8 @@ void GasSupplySystem::ShowConnections()
 {
 	if (ObjectsExist(connections)) {
 		for (auto& [id_pipe, edge] : connections) {
-			cout << "ID_ТРУБЫ: " << id_pipe << " | " << "ID_СТАНЦИИ(ВЫХ): "
-				<< cs_objects.at(edge.id_out).GetId() << "   --->   ID_СТАНЦИИ(ВХ): "
+			cout << "ID ТРУБЫ: " << id_pipe << " | " << "ID СТАНЦИИ (ВЫХОД): "
+				<< cs_objects.at(edge.id_out).GetId() << "   --->   ID СТАНЦИИ (ВХОД): "
 				<< cs_objects.at(edge.id_in).GetId() << "\n";
 		}
 		cout << "\n";
@@ -214,7 +215,7 @@ unordered_set<int> GasSupplySystem::SearchPipesByKmMark(string km_mark)
 
 unordered_set<int> GasSupplySystem::SearchPipesByStatus(int status)
 {
-	return FindByFilter(pipe_objects, ChekByStatus, status);
+	return FindByFilter(pipe_objects, CheckByStatus, status);
 }
 
 unordered_set<int> GasSupplySystem::SearchFreePipesByDiameters(int diameter)
@@ -237,10 +238,10 @@ void GasSupplySystem::EditOnePipe(int id_pipe)
 {
 	if (pipe_objects.contains(id_pipe)) {
 		pipe_objects.at(id_pipe).ChangeStatus();
-		cout << "Статус изменён!\n";
+		cout << "Статус изменен!\n";
 	}
 	else
-		cout << "Труба с введённым ID не найдена!\n";
+		cout << "Труба с введенным ID не найдена!\n";
 }
 
 void GasSupplySystem::ChangeStatusToOpposite(unordered_set<int>& id_pipes)
@@ -309,27 +310,25 @@ void GasSupplySystem::EditOneCS(int id_cs)
 		cout << "\"1\" - Увеличить,\"0\" - Уменьшить: ";
 		GetCorrectNumber(0, 1) ? cs_objects.at(id_cs).IncreaseActiveWS() :
 			cs_objects.at(id_cs).DecreaseActiveWS();
-		cout << "Количество цехов изменено\n";
+		cout << "Количество мастерских изменено\n";
 	}
 	else
-		cout << "Станция с введённым ID не найдена!\n";
+		cout << "Станция с введенным ID не найдена!\n";
 }
 
-void GasSupplySystem::EditCSPackage(
-	unordered_set<int>& id_cs, int action)
+void GasSupplySystem::EditCSPackage(unordered_set<int>& id_cs, int action)
 {
 	for (auto& id : id_cs) {
 		action ? cs_objects.at(id).IncreaseActiveWS() :
 			cs_objects.at(id).DecreaseActiveWS();
 	}
-
 }
 
 void GasSupplySystem::EditAllCS(int action)
 {
 	for (auto& [id, cs] : cs_objects)
 		action ? cs.IncreaseActiveWS() : cs.DecreaseActiveWS();
-	cout << "Количество неиспользуемых цехов изменено!\n";
+	cout << "Количество неиспользуемых мастерских изменено!\n";
 }
 
 void GasSupplySystem::DeletePipe(int id_pipe)
@@ -337,10 +336,10 @@ void GasSupplySystem::DeletePipe(int id_pipe)
 	if (pipe_objects.contains(id_pipe)) {
 		pipe_objects.erase(id_pipe);
 		connections.erase(id_pipe);
-		cout << "Труба удалена\n";
+		cout << "Труба была удалена\n";
 	}
 	else
-		cout << "Труба с введённым ID не найдена!\n";
+		cout << "Труба с введенным ID не найдена!\n";
 }
 
 void GasSupplySystem::DeleteCS(int id_cs)
@@ -356,10 +355,20 @@ void GasSupplySystem::DeleteCS(int id_cs)
 		for (int i = 0; i < id_pipes.size(); ++i)
 			connections.erase(id_pipes[i]);
 
-		cout << "Станция удалена\n";
+		cout << "Станция была удалена\n";
 	}
 	else
-		cout << "Станция с введённым ID не найдена!\n";
+		cout << "Станция с введенным ID не найдена!\n";
+}
+
+void GasSupplySystem::DeleteConnection(int id_pipe)
+{
+	if (connections.contains(id_pipe)) {
+		connections.erase(id_pipe);
+		cout << "Соединение было удалено\n";
+	}
+	else
+		cout << "Соединение не найдено!\n";
 }
 
 void GasSupplySystem::ConnectStations(int id_out, int id_in, int id_pipe)
@@ -374,54 +383,10 @@ void GasSupplySystem::ConnectStations(int id_out, int id_in, int id_pipe)
 		cout << "Станции с этими ID не найдены\n";
 }
 
-void GasSupplySystem::DeleteConnection(int id_pipe)
+Graph GasSupplySystem::InitGraph()
 {
-	if (connections.contains(id_pipe)) {
-		connections.erase(id_pipe);
-		cout << "Соединение удалено\n";
-	}
-	else
-		cout << "Соединение не найдено!\n";
-}
-
-vector<int> GasSupplySystem::TopologicalSorting()
-{
-	Graph graph(cs_objects, connections);
-	vector<int> result;
-	result.reserve(cs_objects.size());
-	if (graph.isDAG())
-		result = graph.TopologicalSorting();
-	return result;
-}
-
-bool GasSupplySystem::IsPipeConnected(int id_pipe)
-{
-	if (connections.contains(id_pipe))
-		return true;
-	return false;
-}
-
-bool GasSupplySystem::IsCSConnected(int id_cs)
-{
-	for (auto& [id, edge] : connections) {
-		if (edge.id_in == id_cs || edge.id_out == id_cs)
-			return true;
-	}
-	return false;
-}
-
-bool GasSupplySystem::PipeExist(int id_pipe)
-{
-	if (pipe_objects.contains(id_pipe))
-		return true;
-	return false;
-}
-
-bool GasSupplySystem::CSExist(int id_cs)
-{
-	if (cs_objects.contains(id_cs))
-		return true;
-	return false;
+	Graph graph(cs_objects, pipe_objects, connections);
+	return graph;
 }
 
 bool GasSupplySystem::IsPipeObjectsEmpty()
@@ -442,3 +407,33 @@ bool GasSupplySystem::IsCSObjectsEmpty()
 	return false;
 }
 
+bool GasSupplySystem::PipeExist(int id_pipe)
+{
+	if (pipe_objects.contains(id_pipe))
+		return true;
+	return false;
+}
+
+bool GasSupplySystem::CSExist(int id_cs)
+{
+	if (cs_objects.contains(id_cs))
+		return true;
+	cout << "Станция не найдена!\n";
+	return false;
+}
+
+bool GasSupplySystem::IsPipeConnected(int id_pipe)
+{
+	if (connections.contains(id_pipe))
+		return true;
+	return false;
+}
+
+bool GasSupplySystem::IsCSConnected(int id_cs)
+{
+	for (auto& [id, edge] : connections) {
+		if (edge.id_in == id_cs || edge.id_out == id_cs)
+			return true;
+	}
+	return false;
+}

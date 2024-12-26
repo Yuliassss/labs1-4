@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "GasSupplySystem.h"
+#include "Graph.h"
 #include "Addition.h"
 #include "Pipe.h"
 #include "Station.h"

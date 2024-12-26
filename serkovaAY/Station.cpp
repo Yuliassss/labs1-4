@@ -8,10 +8,10 @@ std::istream& operator>>(std::istream& in, Station& cs)
 	cout << "Название: ";
 	cs.title = EnterLine();
 
-	cout << "Колличество цехов (1 - 25): ";
+	cout << "Количество всех цехов (1 - 25): ";
 	cs.all_workshop = GetCorrectNumber(1, 25);
 
-	cout << "Колличество цехов в работе (0 - " << cs.all_workshop << "): ";
+	cout << "Количество цехов в работе (0 - " << cs.all_workshop << "): ";
 	cs.active_workshop = GetCorrectNumber(0, cs.all_workshop);
 
 	cout << "Эффективность (0.0 - 1.0): ";
@@ -27,8 +27,8 @@ std::ostream& operator<<(std::ostream& out, const Station& cs)
 		<< "\"" << cs.title << "\":\n"
 		<< symbol << "ID: " << cs.id << "\n"
 		<< symbol << "Название: " << cs.title << "\n"
-		<< symbol << "Колличество цехов: " << cs.all_workshop << "\n"
-		<< symbol << "Колличество цехов в работе: " << cs.active_workshop << "\n"
+		<< symbol << "Количество цехов: " << cs.all_workshop << "\n"
+		<< symbol << "Количество цехов в работе: " << cs.active_workshop << "\n"
 		<< symbol << "Эффективность: " << cs.efficiency * 100 << " %" << "\n\n";
 
 	return out;

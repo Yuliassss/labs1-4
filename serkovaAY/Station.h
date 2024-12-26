@@ -30,3 +30,4 @@ private:
 	float efficiency;
 	int id;
 };
+

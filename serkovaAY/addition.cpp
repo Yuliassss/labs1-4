@@ -34,3 +34,4 @@ int ChooseActionMenu(vector<string>& menu, bool with_exit = false)
 	cout << "Выберите действие: ";
 	return GetCorrectNumber<int>(0, menu.size());
 }
+
